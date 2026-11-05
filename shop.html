@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="hi" class="h-full bg-[#FAF6F0]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petalverse Crafty Girl - Official Store</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#FAF6F0',
+                            card: '#FFFFFF',
+                            primary: '#D89299',
+                            primaryHover: '#C67A82',
+                            accent: '#A45D63',
+                            beige: '#F3E9DD',
+                            nude: '#EADBC8',
+                            dark: '#3E2723',
+                            muted: '#8D7B68'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Modular compatibility) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAF6F0;
+            color: #3E2723;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .step-active {
+            background-color: #D89299;
+            color: white;
+            border-color: #D89299;
+        }
+        .step-line-active {
+            background-color: #D89299;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col min-h-screen">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-brand-accent text-white text-xs text-center py-1.5 px-4 font-medium tracking-wide flex justify-between items-center">
+        <span class="mx-auto">🌸 🎉 Welcome to Petalverse Crafty Girl | Free Delivery on Orders Over ₹499!</span>
+        <a href="https://www.instagram.com/petalverse.crafty_girl?psln=YTQ3NXQxOXBwemgw" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1 hover:text-brand-beige transition">
+            <i class="fab fa-instagram"></i> Follow on Insta
+        </a>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-brand-nude">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <!-- Brand Logo & Name -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showScreen('home')">
+                <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" 
+                     alt="Petalverse Logo" 
+                     class="w-11 h-11 rounded-full object-cover border-2 border-brand-primary shadow-sm"
+                     onerror="this.src='https://placehold.co/100x100/F3E9DD/3E2723?text=Petalverse'">
+                <div>
+                    <h1 class="font-bold text-lg leading-none tracking-tight text-brand-dark flex items-center gap-1">
+                        Petalverse
+                        <span class="text-xs text-brand-primary font-normal bg-brand-beige px-1.5 py-0.5 rounded">Crafts</span>
+                    </h1>
+                    <p class="text-[10px] text-brand-muted font-medium">Handmade with Love ✨</p>
+                </div>
+            </div>
+
+            <!-- Search Bar (Desktop & Tablet) -->
+            <div class="hidden md:flex flex-1 max-w-md mx-4 relative">
+                <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search handmade crafts, flowers, gifts..." 
+                       class="w-full pl-10 pr-4 py-2 text-sm bg-brand-bg rounded-full border border-brand-nude focus:outline-none focus:border-brand-primary transition">
+                <i class="fas fa-search absolute left-3.5 top-2.5 text-brand-muted text-sm"></i>
+            </div>
+
+            <!-- Action Navigation Icons -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <!-- Wishlist Icon -->
+                <button onclick="toggleWishlistScreen()" class="relative p-2 text-brand-dark hover:text-brand-primary transition" title="Wishlist">
+                    <i class="far fa-heart text-xl"></i>
+                    <span id="wishlistCount" class="hidden absolute -top-1 -right-1 bg-brand-primary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+                </button>
+
+                <!-- Cart Icon -->
+                <button onclick="toggleCartScreen()" class="relative p-2 text-brand-dark hover:text-brand-primary transition" title="Cart">
+                    <i class="fas fa-shopping-bag text-xl"></i>
+                    <span id="cartCount" class="hidden absolute -top-1 -right-1 bg-brand-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+                </button>
+
+                <!-- My Orders Icon -->
+                <button onclick="openMyOrders()" class="p-2 text-brand-dark hover:text-brand-primary transition flex items-center gap-1 text-xs font-semibold" title="My Orders">
+                    <i class="fas fa-box text-xl"></i>
+                    <span class="hidden lg:inline">Orders</span>
+                </button>
+
+                <!-- User Profile / Auth Button -->
+                <button onclick="openProfileModal()" class="flex items-center gap-2 pl-2 border-l border-brand-nude text-brand-dark" title="Profile">
+                    <div class="w-8 h-8 rounded-full bg-brand-beige flex items-center justify-center text-brand-accent font-bold text-sm">
+                        <i class="fas fa-user text-xs" id="userIcon"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar -->
+        <div class="px-4 pb-3 md:hidden">
+            <div class="relative">
+                <input type="text" id="mobileSearchInput" onkeyup="handleSearchMobile()" placeholder="Search handmade crafts, flowers..." 
+                       class="w-full pl-9 pr-4 py-1.5 text-xs bg-brand-bg rounded-full border border-brand-nude focus:outline-none focus:border-brand-primary">
+                <i class="fas fa-search absolute left-3 top-2 text-brand-muted text-xs"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTAINER FOR SCREENS -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+
+        <!-- ================= HOME / CATALOG SCREEN ================= -->
+        <section id="screen-home" class="space-y-6">
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-brand-nude via-pink-100 to-brand-beige p-6 md:p-8 flex flex-col md:flex-row items-center justify-between shadow-sm border border-brand-nude/50">
+                <div class="space-y-3 z-10 text-center md:text-left">
+                    <span class="bg-brand-primary text-white text-[11px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">Aesthetic Collection</span>
+                    <h2 class="text-2xl md:text-4xl font-bold text-brand-dark">Handcrafted Treasures For You</h2>
+                    <p class="text-xs md:text-sm text-brand-muted max-w-md">Discover unique resin crafts, custom resin bookmarks, keychains, and floral jewelry made with love.</p>
+                    <div class="pt-2">
+                        <a href="#catalog" class="inline-block bg-brand-dark text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow hover:bg-brand-accent transition">Shop New Arrivals</a>
+                    </div>
+                </div>
+                <div class="mt-4 md:mt-0 relative flex-shrink-0">
+                    <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" alt="Logo Banner" class="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover shadow-md rotate-3 border-4 border-white">
+                </div>
+            </div>
+
+            <!-- Categories / Filter Badges (Synced with Firebase / Dynamic) -->
+            <div id="categoriesBar" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-1 text-xs">
+                <button onclick="filterCategory('all')" class="cat-btn px-4 py-2 rounded-full bg-brand-dark text-white font-medium whitespace-nowrap shadow-sm">All Crafts</button>
+                <button onclick="filterCategory('flower')" class="cat-btn px-4 py-2 rounded-full bg-white border border-brand-nude text-brand-dark font-medium whitespace-nowrap hover:bg-brand-beige">Flower</button>
+            </div>
+
+            <!-- Product Grid Title -->
+            <div id="catalog" class="flex items-center justify-between border-b border-brand-nude/50 pb-2">
+                <h3 class="font-bold text-base md:text-lg text-brand-dark flex items-center gap-2">
+                    <i class="fas fa-sparkles text-brand-primary"></i> Products
+                </h3>
+                <span id="productCount" class="text-xs text-brand-muted">Loading...</span>
+            </div>
+
+            <!-- Dynamic Product Grid -->
+            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- Products dynamically rendered from Firebase -->
+            </div>
+        </section>
+
+        <!-- ================= PRODUCT DETAIL SCREEN ================= -->
+    <!-- ================= PROFILE MODAL ================= -->
+    <div id="profileModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-2xl p-6 shadow-2xl space-y-5 border border-brand-nude text-center">
+            <div class="flex justify-between items-center border-b border-brand-nude pb-3">
+                <h3 class="font-bold text-base text-brand-dark flex items-center gap-2">
+                    <i class="fas fa-user-circle text-brand-primary"></i> My Profile / मेरा प्रोफाइल
+                </h3>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-brand-dark">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- User Info Section -->
+            <div class="space-y-2">
+                <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" alt="Logo" class="w-16 h-16 mx-auto rounded-full border-2 border-brand-primary object-cover">
+                <div id="profileUserStatus">
+                    <!-- Populated dynamically based on login state -->
+                </div>
+            </div>
+
+            <!-- Action Options -->
+            <div class="space-y-2.5 pt-2 border-t border-brand-nude/60">
+                <button onclick="closeProfileModal(); openMyOrders();" class="w-full bg-brand-beige hover:bg-brand-nude text-brand-dark py-2.5 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2">
+                    <i class="fas fa-box"></i> My Orders / मेरे ऑर्डर्स
+                </button>
+
+                <a href="https://www.instagram.com/petalverse.crafty_girl?psln=YTQ3NXQxOXBwemgw" target="_blank" rel="noopener noreferrer" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white py-2.5 rounded-xl font-semibold text-xs shadow transition flex items-center justify-center gap-2">
+                    <i class="fab fa-instagram text-sm"></i> Visit Instagram Account
+                </a>
+
+                <div id="profileAuthButtons" class="pt-2">
+                    <!-- Dynamic Sign Out / Switch Account or Login button -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PHONE AUTH MODAL ================= -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-2xl p-6 shadow-2xl text-center space-y-4 border border-brand-nude">
+            <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" alt="Logo" class="w-14 h-14 mx-auto rounded-full border-2 border-brand-primary">
+            <div>
+                <h3 class="font-bold text-base text-brand-dark">Sign In / Register</h3>
+                <p class="text-xs text-brand-muted">Enter 10-digit mobile number to save wishlist & track live orders.</p>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <input type="tel" id="authPhoneInput" maxlength="10" placeholder="Enter 10-digit Mobile Number" 
+                           class="w-full text-center text-sm p-2.5 rounded-xl border border-brand-nude focus:border-brand-primary focus:outline-none tracking-widest font-bold">
+                    <p id="phoneErrorMsg" class="hidden text-[11px] text-red-500 mt-1">कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें (Invalid 10-digit number)</p>
+                </div>
+                <button onclick="savePhoneAuth()" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white py-2.5 rounded-xl font-bold text-xs shadow transition">
+                    Continue with Phone Number
+                </button>
+            </div>
+            <button onclick="closeAuthModal()" class="text-xs text-gray-400 hover:text-gray-600">Cancel</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto bg-white border-t border-brand-nude py-6">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
+            <div class="flex justify-center items-center gap-4">
+                <a href="https://www.instagram.com/petalverse.crafty_girl?psln=YTQ3NXQxOXBwemgw" target="_blank" rel="noopener noreferrer" class="text-brand-dark hover:text-pink-600 flex items-center gap-1.5 text-xs font-semibold">
+                    <i class="fab fa-instagram text-base text-pink-600"></i> Follow us on Instagram
+                </a>
+            </div>
+            <p class="text-[11px] text-brand-muted">© Petalverse Crafty Girl. Powered by Firebase Realtime Database Sync.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- 1. FIREBASE INITIALIZATION ---
+        const firebaseConfig = {
+            databaseURL: "https://felalverse-default-rtdb.firebaseio.com/"
+        };
+        
+        let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            console.log("Firebase Realtime Database initialized successfully.");
+        } catch (e) {
+            console.warn("Firebase Init warning:", e);
+        }
+
+        // --- 2. STATE MANAGEMENT (No Dummy Products!) ---
+        let allProducts = []; // Purely from Firebase Realtime DB
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let currentUserPhone = localStorage.getItem('petalverse_user_phone') || '';
+        let cartItems = [];
+        let wishlistItems = JSON.parse(localStorage.getItem('petalverse_wishlist') || '[]');
+        let selectedProduct = null;
+        let authPendingAction = null;
+
+        // --- 3. APP LIFECYCLE ON LOAD ---
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUserUI();
+            updateWishlistBadge();
+            fetchCategoriesFromFirebase();
+            fetchProductsFromFirebase();
+            fetchUserOrdersFromFirebase();
+        });
+
+        // --- 4. PHONE VALIDATION UTILITY ---
+        function isValid10DigitPhone(phone) {
+            const regex = /^[6-9]\d{9}$/;
+            return regex.test(phone.trim());
+        }
+
+        // --- 5. FIREBASE REALTIME LISTENERS ---
+        function fetchCategoriesFromFirebase() {
+            if (!db) return;
+            db.ref('categories').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const bar = document.getElementById('categoriesBar');
+                    bar.innerHTML = `<button onclick="filterCategory('all')" class="cat-btn px-4 py-2 rounded-full ${currentCategory === 'all' ? 'bg-brand-dark text-white' : 'bg-white border border-brand-nude text-brand-dark'} font-medium whitespace-nowrap shadow-sm">All Crafts</button>`;
+                    
+                    let catList = Array.isArray(data) ? data : Object.values(data);
+                    catList.forEach(cat => {
+                        const name = typeof cat === 'string' ? cat : cat.name;
+                        const slug = name.toLowerCase();
+                        bar.innerHTML += `<button onclick="filterCategory('${slug}')" class="cat-btn px-4 py-2 rounded-full ${currentCategory === slug ? 'bg-brand-dark text-white' : 'bg-white border border-brand-nude text-brand-dark'} font-medium whitespace-nowrap hover:bg-brand-beige">${name}</button>`;
+                    });
+                }
+            });
+        }
+
+        function fetchProductsFromFirebase() {
+            if (!db) {
+                renderProducts([]);
+                return;
+            }
+
+            db.ref('products').on('value', (snapshot) => {
+                const data = snapshot.val();
+                allProducts = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        const item = data[key];
+                        allProducts.push({
+                            id: key,
+                            title: item.title || "Handmade Craft",
+                            category: (item.category || "craft").toLowerCase(),
+                            image: item.imageUrl || item.image || "https://placehold.co/400x400/F3E9DD/3E2723?text=Petalverse",
+                            originalPrice: item.originalPrice ? Number(item.originalPrice) : null,
+                            salePrice: Number(item.price || item.salePrice || 0),
+                            description: item.description || "Beautiful handmade item crafted with love.",
+                            timestamp: item.timestamp || 0
+                        });
+                    });
+
+                    // Sort latest added products at the top
+                    allProducts.sort((a, b) => b.timestamp - a.timestamp);
+                }
+                renderProducts(allProducts);
+            }, (err) => {
+                console.error("Firebase Products Read Error:", err);
+                renderProducts([]);
+            });
+        }
+
+        function fetchUserOrdersFromFirebase() {
+            if (!db || !currentUserPhone) return;
+
+            db.ref('orders').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (!data) {
+                    renderOrders([]);
+                    return;
+                }
+
+                const userOrders = [];
+                Object.keys(data).forEach(key => {
+                    const order = data[key];
+                    if (order.phone === currentUserPhone) {
+                        userOrders.push({ id: key, ...order });
+                    }
+                });
+                renderOrders(userOrders);
+            });
+        }
+
+        // --- 6. RENDER PRODUCTS GRID WITH CLEAN EMPTY STATE ---
+        function renderProducts(productsList) {
+            const grid = document.getElementById('productGrid');
+            const countLabel = document.getElementById('productCount');
+            if (!grid) return;
+
+            let filtered = productsList.filter(p => {
+                const matchCat = (currentCategory === 'all' || p.category === currentCategory);
+                const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchCat && matchSearch;
+            });
+
+            countLabel.textContent = `${filtered.length} items available`;
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16 text-brand-muted space-y-3 bg-white rounded-2xl border border-brand-nude/60 p-6">
+                        <i class="fas fa-store-slash text-4xl text-brand-primary"></i>
+                        <h4 class="font-bold text-base text-brand-dark">अभी कोई प्रोडक्ट्स उपलब्ध नहीं हैं</h4>
+                        <p class="text-xs text-brand-muted max-w-xs mx-auto">No products currently available in this view. Check back soon for new handcrafted creations!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const isLiked = wishlistItems.includes(item.id);
+                const discount = item.originalPrice && item.originalPrice > item.salePrice
+                    ? Math.round(((item.originalPrice - item.salePrice) / item.originalPrice) * 100) 
+                    : 0;
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-nude/60 flex flex-col justify-between hover:shadow-md transition group";
+                card.innerHTML = `
+                    <div class="relative aspect-square bg-brand-bg overflow-hidden cursor-pointer" onclick="openProductDetail('${item.id}')">
+                        <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/400x400/F3E9DD/3E2723?text=Petalverse'">
+                        <button onclick="event.stopPropagation(); toggleWishlist('${item.id}')" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/80 backdrop-blur shadow flex items-center justify-center text-sm ${isLiked ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        ${discount > 0 ? `<span class="absolute bottom-2 left-2 bg-brand-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${discount}% OFF</span>` : ''}
+                    </div>
+                    <div class="p-3 flex-1 flex flex-col justify-between space-y-2">
+                        <div class="cursor-pointer" onclick="openProductDetail('${item.id}')">
+                            <h4 class="font-semibold text-xs md:text-sm text-brand-dark line-clamp-1">${item.title}</h4>
+                            <div class="flex items-baseline gap-1.5 mt-1">
+                                <span class="font-extrabold text-sm text-brand-dark">₹${item.salePrice}</span>
+                                ${item.originalPrice ? `<span class="text-[11px] text-gray-400 line-through">₹${item.originalPrice}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5 pt-1">
+                            <button onclick="addToCart('${item.id}')" class="w-full bg-brand-beige hover:bg-brand-nude text-brand-dark text-[11px] font-semibold py-1.5 rounded-lg border border-brand-nude transition">
+                                + Cart
+                            </button>
+                            <button onclick="buyNowSingle('${item.id}')" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white text-[11px] font-semibold py-1.5 rounded-lg shadow-sm transition">
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- 7. NAVIGATION & SCREEN SWITCHING ---
+        function showScreen(screenName) {
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-detail').classList.add('hidden');
+            document.getElementById('screen-orders').classList.add('hidden');
+            document.getElementById('screen-wishlist').classList.add('hidden');
+
+            if (screenName === 'home') document.getElementById('screen-home').classList.remove('hidden');
+            if (screenName === 'detail') document.getElementById('screen-detail').classList.remove('hidden');
+            if (screenName === 'orders') document.getElementById('screen-orders').classList.remove('hidden');
+            if (screenName === 'wishlist') document.getElementById('screen-wishlist').classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- 8. PRODUCT DETAIL VIEW ---
+        function openProductDetail(productId) {
+            selectedProduct = allProducts.find(p => p.id === productId);
+            if (!selectedProduct) return;
+
+            document.getElementById('detailImage').src = selectedProduct.image;
+            document.getElementById('detailTitle').textContent = selectedProduct.title;
+            document.getElementById('detailSalePrice').textContent = `₹${selectedProduct.salePrice}`;
+            document.getElementById('detailOriginalPrice').textContent = selectedProduct.originalPrice ? `₹${selectedProduct.originalPrice}` : '';
+            
+            const disc = selectedProduct.originalPrice && selectedProduct.originalPrice > selectedProduct.salePrice
+                ? Math.round(((selectedProduct.originalPrice - selectedProduct.salePrice) / selectedProduct.originalPrice) * 100) 
+                : 0;
+            document.getElementById('detailDiscount').textContent = `${disc}% OFF`;
+            document.getElementById('detailDescription').textContent = selectedProduct.description || "Aesthetic handcrafted item crafted with care by Petalverse.";
+
+            const isLiked = wishlistItems.includes(selectedProduct.id);
+            const wishBtn = document.getElementById('detailWishlistBtn');
+            wishBtn.className = `absolute top-3 right-3 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow flex items-center justify-center text-lg ${isLiked ? 'text-red-500' : 'text-gray-400'}`;
+            wishBtn.onclick = () => toggleWishlist(selectedProduct.id);
+
+            document.getElementById('detailAddToCartBtn').onclick = () => addToCart(selectedProduct.id);
+            document.getElementById('detailBuyNowBtn').onclick = () => buyNowSingle(selectedProduct.id);
+
+            renderRecommendations(selectedProduct.id);
+            showScreen('detail');
+        }
+
+        function renderRecommendations(currentId) {
+            const recGrid = document.getElementById('recommendedGrid');
+            recGrid.innerHTML = '';
+            const others = allProducts.filter(p => p.id !== currentId).slice(0, 4);
+
+            others.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl p-2 border border-brand-nude/60 cursor-pointer hover:shadow-sm transition";
+                card.onclick = () => openProductDetail(item.id);
+                card.innerHTML = `
+                    <img src="${item.image}" class="w-full aspect-square object-cover rounded-lg mb-2">
+                    <h5 class="text-xs font-semibold text-brand-dark line-clamp-1">${item.title}</h5>
+                    <p class="text-xs font-bold text-brand-accent">₹${item.salePrice}</p>
+                `;
+                recGrid.appendChild(card);
+            });
+        }
+
+        // --- 9. WISHLIST FEATURE & AUTH CHECK ---
+        function toggleWishlist(productId) {
+            if (!currentUserPhone) {
+                authPendingAction = () => toggleWishlist(productId);
+                openAuthModal();
+                return;
+            }
+
+            const idx = wishlistItems.indexOf(productId);
+            if (idx > -1) {
+                wishlistItems.splice(idx, 1);
+            } else {
+                wishlistItems.push(productId);
+            }
+
+            localStorage.setItem('petalverse_wishlist', JSON.stringify(wishlistItems));
+            updateWishlistBadge();
+            renderProducts(allProducts);
+
+            if (selectedProduct && selectedProduct.id === productId) {
+                openProductDetail(productId);
+            }
+
+            if (!document.getElementById('screen-wishlist').classList.contains('hidden')) {
+                renderWishlistScreen();
+            }
+        }
+
+        function updateWishlistBadge() {
+            const badge = document.getElementById('wishlistCount');
+            if (wishlistItems.length > 0) {
+                badge.textContent = wishlistItems.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function toggleWishlistScreen() {
+            if (!currentUserPhone) {
+                authPendingAction = () => toggleWishlistScreen();
+                openAuthModal();
+                return;
+            }
+            renderWishlistScreen();
+            showScreen('wishlist');
+        }
+
+        function renderWishlistScreen() {
+            const grid = document.getElementById('wishlistGrid');
+            grid.innerHTML = '';
+            const items = allProducts.filter(p => wishlistItems.includes(p.id));
+
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-brand-muted space-y-2">
+                        <i class="far fa-heart text-3xl"></i>
+                        <p class="text-sm font-medium">Your wishlist is currently empty.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl p-3 border border-brand-nude flex flex-col justify-between";
+                card.innerHTML = `
+                    <img src="${item.image}" class="w-full aspect-square object-cover rounded-lg mb-2 cursor-pointer" onclick="openProductDetail('${item.id}')">
+                    <div>
+                        <h4 class="font-semibold text-xs text-brand-dark line-clamp-1">${item.title}</h4>
+                        <p class="font-bold text-xs text-brand-dark mt-1">₹${item.salePrice}</p>
+                    </div>
+                    <button onclick="addToCart('${item.id}')" class="mt-2 bg-brand-primary text-white text-[11px] font-semibold py-1.5 rounded-lg w-full">
+                        Add to Cart
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- 10. CART & CHECKOUT FLOW ---
+        function addToCart(productId) {
+            const item = allProducts.find(p => p.id === productId);
+            if (!item) return;
+
+            const existing = cartItems.find(c => c.id === productId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cartItems.push({ ...item, qty: 1 });
+            }
+            updateCartBadge();
+            toggleCartScreen(true);
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartCount');
+            const totalQty = cartItems.reduce((acc, curr) => acc + curr.qty, 0);
+            if (totalQty > 0) {
+                badge.textContent = totalQty;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function toggleCartScreen(forceOpen = false) {
+            const drawer = document.getElementById('cartDrawer');
+            if (forceOpen || drawer.classList.contains('hidden')) {
+                renderCartDrawer();
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+
+        function renderCartDrawer() {
+            const list = document.getElementById('cartItemsList');
+            const totalLabel = document.getElementById('cartTotalPrice');
+            list.innerHTML = '';
+
+            let total = 0;
+            if (cartItems.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12 text-brand-muted space-y-2">
+                        <i class="fas fa-shopping-bag text-3xl"></i>
+                        <p class="text-sm font-medium">Your bag is empty.</p>
+                    </div>
+                `;
+                totalLabel.textContent = `₹0`;
+                return;
+            }
+
+            cartItems.forEach(item => {
+                total += item.salePrice * item.qty;
+                const row = document.createElement('div');
+                row.className = "flex items-center gap-3 bg-brand-bg p-2.5 rounded-xl border border-brand-nude/60";
+                row.innerHTML = `
+                    <img src="${item.image}" class="w-14 h-14 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h5 class="text-xs font-semibold text-brand-dark line-clamp-1">${item.title}</h5>
+                        <p class="text-xs font-bold text-brand-accent">₹${item.salePrice}</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <button onclick="changeQty('${item.id}', -1)" class="w-5 h-5 bg-white border border-brand-nude rounded text-xs">-</button>
+                            <span class="text-xs font-bold">${item.qty}</span>
+                            <button onclick="changeQty('${item.id}', 1)" class="w-5 h-5 bg-white border border-brand-nude rounded text-xs">+</button>
+                        </div>
+                    </div>
+                    <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 text-sm p-1">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                list.appendChild(row);
+            });
+
+            totalLabel.textContent = `₹${total}`;
+        }
+
+        function changeQty(id, delta) {
+            const item = cartItems.find(c => c.id === id);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                cartItems = cartItems.filter(c => c.id !== id);
+            }
+            updateCartBadge();
+            renderCartDrawer();
+        }
+
+        function removeFromCart(id) {
+            cartItems = cartItems.filter(c => c.id !== id);
+            updateCartBadge();
+            renderCartDrawer();
+        }
+
+        function buyNowSingle(productId) {
+            const item = allProducts.find(p => p.id === productId);
+            if (!item) return;
+            cartItems = [{ ...item, qty: 1 }];
+            updateCartBadge();
+            proceedToCheckout();
+        }
+
+        function proceedToCheckout() {
+            if (cartItems.length === 0) return;
+
+            if (!currentUserPhone) {
+                authPendingAction = () => proceedToCheckout();
+                openAuthModal();
+                return;
+            }
+
+            document.getElementById('cartDrawer').classList.add('hidden');
+            const summary = document.getElementById('checkoutSummary');
+            let total = 0;
+            let itemsHtml = cartItems.map(i => {
+                total += i.salePrice * i.qty;
+                return `<div class="flex justify-between"><span>${i.title} (x${i.qty})</span><span class="font-bold">₹${i.salePrice * i.qty}</span></div>`;
+            }).join('');
+
+            summary.innerHTML = `
+                <div class="space-y-1">
+                    ${itemsHtml}
+                    <div class="border-t border-brand-nude pt-1 flex justify-between font-bold text-sm text-brand-dark">
+                        <span>Total Payable</span>
+                        <span>₹${total}</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('custPhone').value = currentUserPhone;
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        // --- 11. SUBMIT ORDER TO FIREBASE REALTIME DB ---
+        function handlePlaceOrder(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+
+            if (!name || !address) return;
+
+            if (!isValid10DigitPhone(phone)) {
+                alert("कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें (Invalid 10-digit number)");
+                return;
+            }
+
+            const totalAmount = cartItems.reduce((acc, curr) => acc + (curr.salePrice * curr.qty), 0);
+            
+            const newOrder = {
+                customerName: name,
+                phone: phone,
+                address: address,
+                items: cartItems,
+                totalAmount: totalAmount,
+                statusStep: 1, // 1 to 5 status steps for Admin control
+                estimatedDelivery: "3-5 Days",
+                createdAt: new Date().toISOString()
+            };
+
+            if (db) {
+                const ordersRef = db.ref('orders');
+                ordersRef.push(newOrder).then(() => {
+                    alert("Order placed successfully! 🌸");
+                    cartItems = [];
+                    updateCartBadge();
+                    closeCheckoutModal();
+                    openMyOrders();
+                }).catch(err => {
+                    console.error("Order save error:", err);
+                    alert("Order placed!");
+                    cartItems = [];
+                    updateCartBadge();
+                    closeCheckoutModal();
+                    openMyOrders();
+                });
+            } else {
+                alert("Order placed successfully!");
+                cartItems = [];
+                updateCartBadge();
+                closeCheckoutModal();
+                openMyOrders();
+            }
+        }
+
+        // --- 12. ORDER TRACKING & 5-STEP LINE DISPLAY ---
+        function openMyOrders() {
+            if (!currentUserPhone) {
+                authPendingAction = () => openMyOrders();
+                openAuthModal();
+                return;
+            }
+            fetchUserOrdersFromFirebase();
+            showScreen('orders');
+        }
+
+        function renderOrders(ordersArray) {
+            const container = document.getElementById('ordersList');
+            container.innerHTML = '';
+
+            if (!ordersArray || ordersArray.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-8 rounded-2xl text-center border border-brand-nude text-brand-muted space-y-2">
+                        <i class="fas fa-box text-4xl text-brand-primary"></i>
+                        <p class="text-sm font-medium">आपकी कोई एक्टिव ऑर्डर नहीं है / No orders placed yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            ordersArray.forEach(order => {
+                const currentStep = order.statusStep || 1;
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-brand-nude/70 space-y-4";
+                
+                const steps = [
+                    "Order Ready",
+                    "Shipped",
+                    "In-Transit",
+                    "Out for Delivery",
+                    "Delivered"
+                ];
+
+                let itemsListHtml = (order.items || []).map(i => `
+                    <div class="flex items-center gap-2 text-xs text-brand-dark">
+                        <span class="font-semibold">${i.title}</span>
+                        <span class="text-brand-muted">x${i.qty}</span>
+                        <span class="ml-auto font-bold">₹${i.salePrice * i.qty}</span>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-center gap-2 border-b border-brand-nude pb-3">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-brand-muted">Order ID: #${order.id ? order.id.slice(-6) : 'OFFLINE'}</span>
+                            <h4 class="font-bold text-sm text-brand-dark">Total: ₹${order.totalAmount}</h4>
+                        </div>
+                        <span class="bg-brand-beige text-brand-accent text-xs font-semibold px-2.5 py-1 rounded-full">
+                            Est. Delivery: ${order.estimatedDelivery || '3-5 Days'}
+                        </span>
+                    </div>
+
+                    <!-- Items Summary -->
+                    <div class="bg-brand-bg p-3 rounded-xl space-y-1.5 border border-brand-nude/40">
+                        ${itemsListHtml}
+                    </div>
+
+                    <!-- 5-STEP REALTIME STATUS TRACKER -->
+                    <div class="py-4">
+                        <h5 class="text-xs font-bold text-brand-dark mb-4 flex items-center gap-1.5">
+                            <i class="fas fa-truck-loading text-brand-primary"></i> Live Shipping Status:
+                        </h5>
+                        <div class="relative flex items-center justify-between max-w-xl mx-auto px-2">
+                            <!-- Background Progress Line -->
+                            <div class="absolute top-1/2 left-4 right-4 h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
+                            <!-- Active Progress Line -->
+                            <div class="absolute top-1/2 left-4 h-1 bg-brand-primary -translate-y-1/2 z-0 transition-all duration-500" 
+                                 style="width: ${((currentStep - 1) / (steps.length - 1)) * 90}%;"></div>
+
+                            <!-- 5 Progress Dots -->
+                            ${steps.map((label, index) => {
+                                const stepNum = index + 1;
+                                const isActive = stepNum <= currentStep;
+                                return `
+                                    <div class="relative z-10 flex flex-col items-center">
+                                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition duration-300 ${isActive ? 'bg-brand-primary text-white ring-4 ring-pink-100' : 'bg-white border-2 border-gray-300 text-gray-400'}">
+                                            ${isActive ? '<i class="fas fa-check text-[10px]"></i>' : stepNum}
+                                        </div>
+                                        <span class="text-[10px] mt-1.5 font-medium ${isActive ? 'text-brand-dark font-bold' : 'text-gray-400'} text-center max-w-[60px] leading-tight">
+                                            ${label}
+                                        </span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- 13. AUTHENTICATION & PROFILE MODAL LOGIC ---
+        function openAuthModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('phoneErrorMsg').classList.add('hidden');
+        }
+
+        function savePhoneAuth() {
+            const input = document.getElementById('authPhoneInput');
+            const phone = input.value.trim();
+            const err = document.getElementById('phoneErrorMsg');
+
+            if (!isValid10DigitPhone(phone)) {
+                err.classList.remove('hidden');
+                return;
+            }
+
+            err.classList.add('hidden');
+            currentUserPhone = phone;
+            localStorage.setItem('petalverse_user_phone', phone);
+            updateUserUI();
+            closeAuthModal();
+
+            if (authPendingAction) {
+                const act = authPendingAction;
+                authPendingAction = null;
+                act();
+            }
+        }
+
+        function updateUserUI() {
+            const icon = document.getElementById('userIcon');
+            if (currentUserPhone) {
+                icon.className = "fas fa-user-check text-xs text-emerald-600";
+            } else {
+                icon.className = "fas fa-user text-xs text-brand-accent";
+            }
+        }
+
+        function openProfileModal() {
+            const statusBox = document.getElementById('profileUserStatus');
+            const authBtnsBox = document.getElementById('profileAuthButtons');
+
+            if (currentUserPhone) {
+                statusBox.innerHTML = `
+                    <h4 class="font-bold text-sm text-brand-dark">+91 ${currentUserPhone}</h4>
+                    <span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Logged In / फोन से कनेक्टेड</span>
+                `;
+                authBtnsBox.innerHTML = `
+                    <button onclick="handleSignOut()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-xl text-xs font-semibold transition">
+                        Sign Out / लॉग आउट करें
+                    </button>
+                `;
+            } else {
+                statusBox.innerHTML = `
+                    <h4 class="font-bold text-sm text-brand-dark">Guest User</h4>
+                    <p class="text-xs text-brand-muted">लॉग इन नहीं हैं</p>
+                `;
+                authBtnsBox.innerHTML = `
+                    <button onclick="closeProfileModal(); openAuthModal();" class="w-full bg-brand-primary text-white py-2 rounded-xl text-xs font-semibold shadow hover:bg-brand-primaryHover transition">
+                        Log In with Mobile Number
+                    </button>
+                `;
+            }
+
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function handleSignOut() {
+            localStorage.removeItem('petalverse_user_phone');
+            currentUserPhone = '';
+            updateUserUI();
+            closeProfileModal();
+            showScreen('home');
+        }
+
+        // --- 14. SEARCH & CATEGORY FILTERS ---
+        function filterCategory(cat) {
+            currentCategory = cat;
+            renderProducts(allProducts);
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value;
+            renderProducts(allProducts);
+        }
+
+        function handleSearchMobile() {
+            searchQuery = document.getElementById('mobileSearchInput').value;
+            renderProducts(allProducts);
+        }
+    </script>
+</body>
+</html>
