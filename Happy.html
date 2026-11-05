@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Happy Birthday - Petalverse Crafty Girl ✨</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        warmPeach: '#FBE8E0',
+                        rosePink: '#E890A0',
+                        softDusty: '#D97784',
+                        deepWine: '#5C1D2A',
+                        cardBg: '#FFFDF9',
+                        goldGlow: '#FFD700',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        handwriting: ['Caveat', 'cursive'],
+                        script: ['Great Vibes', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFF7F8 0%, #FBE8E0 50%, #FFF0F3 100%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Transparent Celebration Canvas */
+        #celebrationCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 4px 12px rgba(232, 144, 160, 0.4)); transform: scale(1); }
+            50% { filter: drop-shadow(0 8px 24px rgba(232, 144, 160, 0.7)); transform: scale(1.03); }
+        }
+        @keyframes flameFlicker {
+            0%, 100% { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 0 6px #FFD700); }
+            50% { transform: scale(1.25) rotate(2deg); filter: drop-shadow(0 0 14px #FF5722); }
+        }
+
+        .animate-float { animation: floatSlow 4s ease-in-out infinite; }
+        .animate-gift { animation: pulseGlow 3s ease-in-out infinite; }
+        .flame-anim { animation: flameFlicker 0.18s infinite alternate ease-in-out; transform-origin: bottom center; }
+
+        /* Polaroid Hover Tilt */
+        .polaroid-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .polaroid-card:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            z-index: 30;
+            box-shadow: 0 20px 30px -10px rgba(92, 29, 42, 0.2);
+        }
+
+        .page-step {
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+        }
+        .page-hidden {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 font-sans antialiased pb-12 relative">
+
+    <!-- Celebration Fireworks & Confetti Canvas (Always on Top) -->
+    <canvas id="celebrationCanvas"></canvas>
+
+    <!-- HEADER / BRANDING BANNER -->
+    <header class="relative z-30 pt-6 px-4 max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+        <!-- Brand Identity -->
+        <div class="flex items-center space-x-3.5 bg-white/80 border border-rosePink/30 px-4 py-2 rounded-full shadow-md backdrop-blur-md">
+            <!-- Non-Clickable Circular Image Logo -->
+            <div class="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-rosePink via-amber-300 to-softDusty pointer-events-none select-none overflow-hidden shadow-sm">
+                <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793845200/ax9rnz9wqbqtxisl2gw8.jpg" 
+                     alt="Petalverse Crafty Girl Logo" 
+                     class="w-full h-full object-cover rounded-full pointer-events-none select-none">
+            </div>
+            <div>
+                <span class="font-serif text-sm md:text-base font-bold text-deepWine block tracking-wide">Petalverse Crafty Girl</span>
+                <span class="text-[10px] text-softDusty font-medium block">Crafts, Art & Birthday Magic ✨</span>
+            </div>
+        </div>
+
+        <!-- Right Side Links & Actions -->
+        <div class="flex items-center space-x-3">
+            <a href="https://www.instagram.com/petalverse.crafty_girl?cplk=YTQ3NXQxOXBwemgw" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="px-4 py-2 bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white font-bold rounded-full text-xs shadow-md hover:brightness-105 transition-all flex items-center space-x-1.5 border border-white/40">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span>Instagram Profile</span>
+            </a>
+            
+            <button onclick="triggerConfettiBurst()" class="px-3.5 py-2 bg-white/80 border border-rosePink/30 rounded-full text-xs font-semibold text-deepWine hover:bg-rosePink hover:text-white transition-all shadow-sm">
+                🎉 Blast Confetti
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="relative z-20 w-full min-h-[80vh] flex flex-col justify-center items-center p-4 md:p-8">
+
+        <!-- ================= STEP 1: GIFT BOX COVER ================= -->
+        <section id="step1" class="page-step flex flex-col items-center justify-center text-center max-w-lg w-full">
+            <div class="mb-6 cursor-pointer group" onclick="openGiftBox()">
+                <!-- SVG Gift Illustration -->
+                <div class="w-64 h-64 md:w-72 md:h-72 relative animate-gift mx-auto">
+                    <svg viewBox="0 0 200 200" class="w-full h-full">
+                        <rect x="40" y="85" width="120" height="90" rx="10" fill="#FFF0F3" stroke="#E890A0" stroke-width="4"/>
+                        <rect x="90" y="85" width="20" height="90" fill="#E890A0"/>
+                        <rect x="34" y="65" width="132" height="25" rx="6" fill="#FFDFE5" stroke="#E890A0" stroke-width="4"/>
+                        <rect x="90" y="65" width="20" height="25" fill="#E890A0"/>
+                        <path d="M 100 65 C 70 30 40 50 85 65 Z" fill="#E890A0" stroke="#5C1D2A" stroke-width="1.5"/>
+                        <path d="M 100 65 C 130 30 160 50 115 65 Z" fill="#E890A0" stroke="#5C1D2A" stroke-width="1.5"/>
+                        <circle cx="100" cy="65" r="8" fill="#5C1D2A"/>
+                    </svg>
+                </div>
+            </div>
+
+            <h1 class="font-serif text-3xl md:text-5xl text-deepWine font-bold mb-2 tracking-wide">
+                Happy Birthday! 🎂
+            </h1>
+            <p class="font-handwriting text-2xl text-softDusty tracking-wider animate-bounce">
+                ( Tap the gift box to unwrap your surprise )
+            </p>
+        </section>
+
+
+        <!-- ================= STEP 2: INTERACTIVE CAKE & CANDLE BLOW ================= -->
+        <section id="step2" class="page-step page-hidden flex flex-col items-center justify-center max-w-xl w-full text-center">
+            
+            <span class="inline-block bg-warmPeach text-deepWine text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-widest border border-rosePink/30 mb-4">
+                Make a Wish
+            </span>
+
+            <h2 class="font-serif text-3xl md:text-4xl text-deepWine font-bold mb-4">
+                Blow The Birthday Candles! 🕯️
+            </h2>
+
+            <!-- SVG CAKE WITH TOGGLEABLE CANDLE FLAMES -->
+            <div class="relative w-64 h-64 mx-auto my-4 cursor-pointer" onclick="blowCandles()">
+                <svg viewBox="0 0 200 200" class="w-full h-full">
+                    <!-- Cake Plate -->
+                    <ellipse cx="100" cy="170" rx="80" ry="15" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="3"/>
+                    <!-- Base Layer -->
+                    <rect x="40" y="115" width="120" height="45" rx="8" fill="#F472B6"/>
+                    <path d="M 40,115 Q 60,130 80,115 Q 100,130 120,115 Q 140,130 160,115" fill="#F472B6"/>
+                    <!-- Middle Frosting -->
+                    <rect x="40" y="110" width="120" height="10" fill="#FDF2F8"/>
+                    <!-- Top Layer -->
+                    <rect x="50" y="75" width="100" height="40" rx="6" fill="#FB7185"/>
+                    <path d="M 50,75 Q 75,90 100,75 Q 125,90 150,75" fill="#FFF0F3"/>
+
+                    <!-- Candles -->
+                    <!-- Candle 1 -->
+                    <rect x="70" y="45" width="6" height="30" fill="#FACC15" rx="2"/>
+                    <g id="flame1" class="flame-anim">
+                        <path d="M 73 32 C 68 38, 78 38, 73 45 C 70 41, 76 41, 73 32 Z" fill="#FF9900"/>
+                        <circle cx="73" cy="41" r="2" fill="#FFFF00"/>
+                    </g>
+
+                    <!-- Candle 2 (Center) -->
+                    <rect x="97" y="40" width="6" height="35" fill="#38BDF8" rx="2"/>
+                    <g id="flame2" class="flame-anim">
+                        <path d="M 100 27 C 95 33, 105 33, 100 40 C 97 36, 103 36, 100 27 Z" fill="#FF9900"/>
+                        <circle cx="100" cy="36" r="2" fill="#FFFF00"/>
+                    </g>
+
+                    <!-- Candle 3 -->
+                    <rect x="124" y="45" width="6" height="30" fill="#4ADE80" rx="2"/>
+                    <g id="flame3" class="flame-anim">
+                        <path d="M 127 32 C 122 38, 132 38, 127 45 C 124 41, 130 41, 127 32 Z" fill="#FF9900"/>
+                        <circle cx="127" cy="41" r="2" fill="#FFFF00"/>
+                    </g>
+                </svg>
+            </div>
+
+            <p id="candleStatus" class="font-handwriting text-2xl text-softDusty mb-6">
+                Tap on the cake to blow out candles! 💨
+            </p>
+
+            <button onclick="goToPinLock()" class="group flex items-center space-x-2 bg-rosePink hover:bg-softDusty text-white px-8 py-3.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                <span>Unlock Secret Memory Box</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </button>
+        </section>
+
+
+        <!-- ================= STEP 3: KEYPAD / PASSKEY LOCK ================= -->
+        <section id="step3" class="page-step page-hidden flex flex-col items-center justify-center max-w-md w-full text-center">
+            
+            <div class="bg-cardBg p-8 rounded-3xl shadow-xl border border-warmPeach w-full">
+                <!-- Lock Icon -->
+                <div class="w-14 h-14 bg-warmPeach rounded-full flex items-center justify-center mx-auto mb-4 text-deepWine">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+
+                <h3 class="font-serif text-2xl text-deepWine font-bold mb-1">Enter Secret Passkey</h3>
+                <p id="pinHint" class="text-xs text-gray-500 mb-6">Hint: Default pin is <span class="font-bold text-rosePink">2026</span> or <span class="font-bold text-rosePink">1234</span></p>
+
+                <!-- Passkey Display Dots -->
+                <div id="pinDots" class="flex justify-center items-center space-x-3 mb-8">
+                    <div class="w-4 h-4 rounded-full border-2 border-rosePink/50 transition-colors duration-200"></div>
+                    <div class="w-4 h-4 rounded-full border-2 border-rosePink/50 transition-colors duration-200"></div>
+                    <div class="w-4 h-4 rounded-full border-2 border-rosePink/50 transition-colors duration-200"></div>
+                    <div class="w-4 h-4 rounded-full border-2 border-rosePink/50 transition-colors duration-200"></div>
+                </div>
+
+                <!-- Error Message -->
+                <p id="pinError" class="text-rose-500 text-sm mb-4 h-5 opacity-0 transition-opacity">Incorrect passcode. Try again!</p>
+
+                <!-- Keypad -->
+                <div class="grid grid-cols-3 gap-4 max-w-xs mx-auto mb-2">
+                    <button onclick="pressPin('1')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">1</button>
+                    <button onclick="pressPin('2')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">2</button>
+                    <button onclick="pressPin('3')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">3</button>
+                    <button onclick="pressPin('4')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">4</button>
+                    <button onclick="pressPin('5')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">5</button>
+                    <button onclick="pressPin('6')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">6</button>
+                    <button onclick="pressPin('7')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">7</button>
+                    <button onclick="pressPin('8')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">8</button>
+                    <button onclick="pressPin('9')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">9</button>
+                    <button onclick="clearPin()" class="w-16 h-16 rounded-full bg-cream hover:bg-rose-100 text-rose-500 font-medium text-xs shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">CLEAR</button>
+                    <button onclick="pressPin('0')" class="w-16 h-16 rounded-full bg-cream hover:bg-warmPeach text-deepWine font-semibold text-xl shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">0</button>
+                    <button onclick="deletePin()" class="w-16 h-16 rounded-full bg-cream hover:bg-gray-100 text-gray-600 font-medium text-lg shadow-sm border border-warmPeach/50 transition-all active:scale-95 mx-auto flex items-center justify-center">⌫</button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= STEP 4: LOADING LOADER ================= -->
+        <section id="stepLoader" class="page-step page-hidden flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 border-4 border-rosePink border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p class="font-handwriting text-2xl text-softDusty">Unlocking your birthday surprises...</p>
+        </section>
+
+
+        <!-- ================= STEP 5: UNLOCKED CONTENT (POLAROIDS & LETTER) ================= -->
+        <section id="step5" class="page-step page-hidden w-full max-w-4xl py-6 flex flex-col items-center">
+            
+            <div class="w-full flex justify-between items-center mb-6 px-2">
+                <span class="font-script text-3xl text-deepWine">Celebrating You ✨</span>
+                <button onclick="resetApp()" class="text-xs bg-warmPeach hover:bg-rosePink hover:text-white text-deepWine px-4 py-2 rounded-full border border-rosePink/20 transition-all">
+                    Replay Surprise ↻
+                </button>
+            </div>
+
+            <!-- UNIVERSAL POLAROID MEMORY CARDS -->
+            <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
+                <div class="polaroid-card bg-white p-4 pb-6 shadow-md rounded-sm border border-gray-100 transform -rotate-2">
+                    <div class="w-full h-48 bg-rose-50 rounded-sm overflow-hidden mb-3 relative flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80" alt="Birthday Celebration" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-handwriting text-center text-2xl text-deepWine">Joy & Celebration 🎉</p>
+                </div>
+
+                <div class="polaroid-card bg-white p-4 pb-6 shadow-md rounded-sm border border-gray-100 transform rotate-3">
+                    <div class="w-full h-48 bg-rose-50 rounded-sm overflow-hidden mb-3 relative flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80" alt="Party Balloons" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-handwriting text-center text-2xl text-deepWine">Bright Memories 🎈</p>
+                </div>
+
+                <div class="polaroid-card bg-white p-4 pb-6 shadow-md rounded-sm border border-gray-100 transform -rotate-1">
+                    <div class="w-full h-48 bg-rose-50 rounded-sm overflow-hidden mb-3 relative flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=600&q=80" alt="Sweet Cake" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-handwriting text-center text-2xl text-deepWine">Sweet Moments 🎂</p>
+                </div>
+            </div>
+
+            <!-- HANDWRITTEN UNIVERSAL BIRTHDAY LETTER -->
+            <div class="w-full bg-[#FFFDF7] p-8 md:p-12 rounded-2xl shadow-lg border border-amber-100/80 relative">
+                <div class="absolute top-6 right-6 w-16 h-20 border-2 border-dashed border-rosePink/40 rounded flex flex-col items-center justify-center text-rosePink/60 p-1 pointer-events-none">
+                    <span class="text-[9px] uppercase font-bold tracking-widest">B-DAY</span>
+                    <span class="text-lg">💌</span>
+                    <span class="text-[8px]">SPECIAL</span>
+                </div>
+
+                <h3 class="font-handwriting text-3xl md:text-4xl text-deepWine mb-6 border-b border-warmPeach pb-3">
+                    Dear Birthday Star,
+                </h3>
+
+                <div class="font-handwriting text-2xl md:text-3xl text-gray-800 leading-relaxed space-y-4">
+                    <p>
+                        Wishing you the happiest and most wonderful birthday! Today is all about celebrating you, 
+                        the laughter you bring, and the positivity you share with everyone around you.
+                    </p>
+                    <p>
+                        May this year bring you endless opportunities, peaceful moments, good health, and immense success 
+                        in everything you set out to achieve.
+                    </p>
+                    <p>
+                        Keep shining bright, spreading joy, and creating unforgettable memories. 
+                        Have a grand celebration today! 🥂✨
+                    </p>
+                </div>
+
+                <div class="mt-8 text-right font-script text-4xl text-deepWine">
+                    Warmest Wishes,<br>
+                    <span class="text-rosePink font-handwriting text-3xl">Happy Birthday!</span>
+                </div>
+            </div>
+
+            <div class="mt-10 text-center">
+                <h4 class="font-script text-4xl text-deepWine mb-1">Have an amazing year ahead!</h4>
+                <p class="font-sans text-xs text-softDusty uppercase tracking-widest">Designed with ✨ • Petalverse Crafty Girl</p>
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- FOOTER BRANDING BANNER -->
+    <footer class="relative z-30 max-w-4xl mx-auto px-4 mt-8">
+        <div class="bg-white/80 border border-rosePink/30 rounded-2xl p-6 shadow-sm backdrop-blur-md text-center">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                
+                <!-- Circular NON-CLICKABLE Image -->
+                <div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-rosePink to-amber-300 shadow-md pointer-events-none select-none overflow-hidden">
+                    <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793845200/ax9rnz9wqbqtxisl2gw8.jpg" 
+                         alt="Petalverse Crafty Girl Logo" 
+                         class="w-full h-full object-cover rounded-full pointer-events-none select-none">
+                </div>
+
+                <div class="text-center sm:text-left">
+                    <h4 class="font-serif text-lg font-bold text-deepWine">Petalverse Crafty Girl</h4>
+                    <p class="text-xs text-gray-600 mb-2">DIY Creative Arts & Festive Web Experiences ✨</p>
+                    <a href="https://www.instagram.com/petalverse.crafty_girl?cplk=YTQ3NXQxOXBwemgw" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       class="inline-flex items-center space-x-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs px-4 py-1.5 rounded-full shadow-sm">
+                        <span>Visit Instagram Profile</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT & CELEBRATION ENGINE -->
+    <script>
+        let currentPin = "";
+        const correctPins = ["1234", "2026"];
+        let candlesBlown = false;
+
+        function showStep(stepId) {
+            const steps = ["step1", "step2", "step3", "stepLoader", "step5"];
+            steps.forEach(id => {
+                const el = document.getElementById(id);
+                if (id === stepId) el.classList.remove("page-hidden");
+                else el.classList.add("page-hidden");
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openGiftBox() {
+            triggerConfettiBurst();
+            setTimeout(() => {
+                showStep("step2");
+            }, 500);
+        }
+
+        function blowCandles() {
+            if (!candlesBlown) {
+                document.getElementById("flame1").style.display = "none";
+                document.getElementById("flame2").style.display = "none";
+                document.getElementById("flame3").style.display = "none";
+                document.getElementById("candleStatus").innerText = "Yay! Wishes are on their way! ✨";
+                candlesBlown = true;
+                triggerConfettiBurst();
+                playCheerSound();
+            }
+        }
+
+        function goToPinLock() {
+            showStep("step3");
+        }
+
+        /* Pin Pad Logic */
+        function pressPin(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                updatePinDots();
+            }
+            if (currentPin.length === 4) verifyPin();
+        }
+
+        function deletePin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDots();
+            }
+        }
+
+        function clearPin() {
+            currentPin = "";
+            updatePinDots();
+            hideError();
+        }
+
+        function updatePinDots() {
+            const dots = document.querySelectorAll("#pinDots > div");
+            dots.forEach((dot, index) => {
+                if (index < currentPin.length) dot.classList.add("bg-rosePink", "border-rosePink");
+                else dot.classList.remove("bg-rosePink", "border-rosePink");
+            });
+        }
+
+        function verifyPin() {
+            if (correctPins.includes(currentPin)) {
+                hideError();
+                showStep("stepLoader");
+                triggerConfettiBurst();
+                setTimeout(() => {
+                    showStep("step5");
+                }, 1800);
+            } else {
+                showError();
+                setTimeout(() => clearPin(), 800);
+            }
+        }
+
+        function showError() {
+            document.getElementById("pinError").classList.remove("opacity-0");
+        }
+
+        function hideError() {
+            document.getElementById("pinError").classList.add("opacity-0");
+        }
+
+        function resetApp() {
+            currentPin = "";
+            candlesBlown = false;
+            document.getElementById("flame1").style.display = "block";
+            document.getElementById("flame2").style.display = "block";
+            document.getElementById("flame3").style.display = "block";
+            document.getElementById("candleStatus").innerText = "Tap on the cake to blow out candles! 💨";
+            updatePinDots();
+            showStep("step1");
+        }
+
+        /* Web Audio Sound Effect */
+        function playCheerSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            } catch(e) {}
+        }
+
+        /* Celebration Confetti Engine */
+        const canvas = document.getElementById("celebrationCanvas");
+        const ctx = canvas.getContext("2d");
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener("resize", () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Confetti {
+            constructor() {
+                this.x = width / 2;
+                this.y = height / 2;
+                this.size = Math.random() * 8 + 4;
+                this.speedX = (Math.random() - 0.5) * 12;
+                this.speedY = (Math.random() - 0.7) * 12;
+                this.gravity = 0.25;
+                this.color = ['#E890A0', '#FBE8E0', '#FFD700', '#38BDF8', '#4ADE80'][Math.floor(Math.random() * 5)];
+                this.alpha = 1;
+            }
+
+            update() {
+                this.speedY += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= 0.015;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        let confettiList = [];
+
+        function triggerConfettiBurst() {
+            for (let i = 0; i < 70; i++) {
+                confettiList.push(new Confetti());
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            confettiList = confettiList.filter(c => c.alpha > 0);
+            confettiList.forEach(c => {
+                c.update();
+                c.draw();
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        window.onload = function() {
+            showStep("step1");
+        };
+    </script>
+</body>
+</html>
