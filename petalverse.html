@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi" class="h-full bg-[#FAF6F0]">
+<html lang="en" class="h-full bg-[#FAF6F0]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,9 +35,12 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDK (Modular compatibility) -->
+    <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <!-- Canvas Confetti Library for Celebration Popup -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         body {
@@ -52,27 +55,11 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        .step-active {
-            background-color: #D89299;
-            color: white;
-            border-color: #D89299;
-        }
-        .step-line-active {
-            background-color: #D89299;
-        }
     </style>
 </head>
 <body class="h-full flex flex-col min-h-screen">
 
-    <!-- TOP ANNOUNCEMENT BAR -->
-    <div class="bg-brand-accent text-white text-xs text-center py-1.5 px-4 font-medium tracking-wide flex justify-between items-center">
-        <span class="mx-auto">🌸 🎉 Welcome to Petalverse Crafty Girl | Free Delivery on Orders Over ₹499!</span>
-        <a href="https://www.instagram.com/petalverse.crafty_girl?psln=YTQ3NXQxOXBwemgw" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1 hover:text-brand-beige transition">
-            <i class="fab fa-instagram"></i> Follow on Insta
-        </a>
-    </div>
-
-    <!-- MAIN HEADER -->
+    <!-- MAIN CLEAN HEADER -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-brand-nude">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
             <!-- Brand Logo & Name -->
@@ -83,22 +70,20 @@
                      onerror="this.src='https://placehold.co/100x100/F3E9DD/3E2723?text=Petalverse'">
                 <div>
                     <h1 class="font-bold text-lg leading-none tracking-tight text-brand-dark flex items-center gap-1">
-                        Petalverse
-                        <span class="text-xs text-brand-primary font-normal bg-brand-beige px-1.5 py-0.5 rounded">Crafts</span>
+                        Petalverse Crafty Girl
                     </h1>
-                    <p class="text-[10px] text-brand-muted font-medium">Handmade with Love ✨</p>
+                    <p class="text-[10px] text-brand-muted font-medium mt-0.5">Handcrafted Creations ✨</p>
                 </div>
-            </div>
-
-            <!-- Search Bar (Desktop & Tablet) -->
-            <div class="hidden md:flex flex-1 max-w-md mx-4 relative">
-                <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search handmade crafts, flowers, gifts..." 
-                       class="w-full pl-10 pr-4 py-2 text-sm bg-brand-bg rounded-full border border-brand-nude focus:outline-none focus:border-brand-primary transition">
-                <i class="fas fa-search absolute left-3.5 top-2.5 text-brand-muted text-sm"></i>
             </div>
 
             <!-- Action Navigation Icons -->
             <div class="flex items-center gap-2 sm:gap-4">
+                <!-- Contact Us Button -->
+                <button onclick="openContactModal()" class="p-2 text-brand-dark hover:text-brand-primary transition flex items-center gap-1.5 text-xs font-semibold" title="Contact Us">
+                    <i class="fas fa-headset text-lg text-brand-primary"></i>
+                    <span class="hidden sm:inline">Contact Us</span>
+                </button>
+
                 <!-- Wishlist Icon -->
                 <button onclick="toggleWishlistScreen()" class="relative p-2 text-brand-dark hover:text-brand-primary transition" title="Wishlist">
                     <i class="far fa-heart text-xl"></i>
@@ -113,11 +98,11 @@
 
                 <!-- My Orders Icon -->
                 <button onclick="openMyOrders()" class="p-2 text-brand-dark hover:text-brand-primary transition flex items-center gap-1 text-xs font-semibold" title="My Orders">
-                    <i class="fas fa-box text-xl"></i>
-                    <span class="hidden lg:inline">Orders</span>
+                    <i class="fas fa-box text-lg"></i>
+                    <span class="hidden sm:inline">Orders</span>
                 </button>
 
-                <!-- User Profile / Auth Button -->
+                <!-- Profile Button -->
                 <button onclick="openProfileModal()" class="flex items-center gap-2 pl-2 border-l border-brand-nude text-brand-dark" title="Profile">
                     <div class="w-8 h-8 rounded-full bg-brand-beige flex items-center justify-center text-brand-accent font-bold text-sm">
                         <i class="fas fa-user text-xs" id="userIcon"></i>
@@ -126,126 +111,319 @@
             </div>
         </div>
 
-        <!-- Mobile Search Bar -->
-        <div class="px-4 pb-3 md:hidden">
+        <!-- Search Bar -->
+        <div class="px-4 pb-3 max-w-6xl mx-auto">
             <div class="relative">
-                <input type="text" id="mobileSearchInput" onkeyup="handleSearchMobile()" placeholder="Search handmade crafts, flowers..." 
-                       class="w-full pl-9 pr-4 py-1.5 text-xs bg-brand-bg rounded-full border border-brand-nude focus:outline-none focus:border-brand-primary">
-                <i class="fas fa-search absolute left-3 top-2 text-brand-muted text-xs"></i>
+                <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search handmade crafts, flowers, resin artwork..." 
+                       class="w-full pl-9 pr-4 py-2 text-xs bg-brand-bg rounded-full border border-brand-nude focus:outline-none focus:border-brand-primary">
+                <i class="fas fa-search absolute left-3 top-2.5 text-brand-muted text-xs"></i>
             </div>
         </div>
     </header>
 
-    <!-- CONTAINER FOR SCREENS -->
+    <!-- MAIN APP SCREENS CONTAINER -->
     <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
 
         <!-- ================= HOME / CATALOG SCREEN ================= -->
         <section id="screen-home" class="space-y-6">
-            <!-- Hero Banner -->
-            <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-brand-nude via-pink-100 to-brand-beige p-6 md:p-8 flex flex-col md:flex-row items-center justify-between shadow-sm border border-brand-nude/50">
-                <div class="space-y-3 z-10 text-center md:text-left">
-                    <span class="bg-brand-primary text-white text-[11px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">Aesthetic Collection</span>
-                    <h2 class="text-2xl md:text-4xl font-bold text-brand-dark">Handcrafted Treasures For You</h2>
-                    <p class="text-xs md:text-sm text-brand-muted max-w-md">Discover unique resin crafts, custom resin bookmarks, keychains, and floral jewelry made with love.</p>
-                    <div class="pt-2">
-                        <a href="#catalog" class="inline-block bg-brand-dark text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow hover:bg-brand-accent transition">Shop New Arrivals</a>
-                    </div>
-                </div>
-                <div class="mt-4 md:mt-0 relative flex-shrink-0">
-                    <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" alt="Logo Banner" class="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover shadow-md rotate-3 border-4 border-white">
-                </div>
-            </div>
-
-            <!-- Categories / Filter Badges (Synced with Firebase / Dynamic) -->
+            <!-- Categories Bar -->
             <div id="categoriesBar" class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-1 text-xs">
-                <button onclick="filterCategory('all')" class="cat-btn px-4 py-2 rounded-full bg-brand-dark text-white font-medium whitespace-nowrap shadow-sm">All Crafts</button>
+                <button onclick="filterCategory('all')" class="cat-btn px-4 py-2 rounded-full bg-brand-dark text-white font-medium whitespace-nowrap shadow-sm">All</button>
                 <button onclick="filterCategory('flower')" class="cat-btn px-4 py-2 rounded-full bg-white border border-brand-nude text-brand-dark font-medium whitespace-nowrap hover:bg-brand-beige">Flower</button>
+                <button onclick="filterCategory('craft')" class="cat-btn px-4 py-2 rounded-full bg-white border border-brand-nude text-brand-dark font-medium whitespace-nowrap hover:bg-brand-beige">Craft</button>
             </div>
 
             <!-- Product Grid Title -->
             <div id="catalog" class="flex items-center justify-between border-b border-brand-nude/50 pb-2">
-                <h3 class="font-bold text-base md:text-lg text-brand-dark flex items-center gap-2">
-                    <i class="fas fa-sparkles text-brand-primary"></i> Products
+                <h3 class="font-bold text-base text-brand-dark flex items-center gap-2">
+                    <i class="fas fa-sparkles text-brand-primary"></i> Products Catalog
                 </h3>
                 <span id="productCount" class="text-xs text-brand-muted">Loading...</span>
             </div>
 
             <!-- Dynamic Product Grid -->
             <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <!-- Products dynamically rendered from Firebase -->
+                <!-- Rendered dynamically from Firebase Realtime DB -->
             </div>
         </section>
 
         <!-- ================= PRODUCT DETAIL SCREEN ================= -->
-    <!-- ================= PROFILE MODAL ================= -->
-    <div id="profileModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white max-w-sm w-full rounded-2xl p-6 shadow-2xl space-y-5 border border-brand-nude text-center">
-            <div class="flex justify-between items-center border-b border-brand-nude pb-3">
-                <h3 class="font-bold text-base text-brand-dark flex items-center gap-2">
-                    <i class="fas fa-user-circle text-brand-primary"></i> My Profile / मेरा प्रोफाइल
+        <section id="screen-detail" class="hidden space-y-6">
+            <!-- Half-Screen Image Product View (~48vh height) -->
+            <div class="relative bg-white rounded-3xl overflow-hidden shadow-md border border-brand-nude">
+                <!-- Back Button -->
+                <button onclick="showScreen('home')" class="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-md flex items-center justify-center text-brand-dark hover:bg-white transition">
+                    <i class="fas fa-arrow-left text-base"></i>
+                </button>
+
+                <!-- Wishlist Heart Button -->
+                <button id="detailWishlistBtn" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-md flex items-center justify-center text-gray-400 hover:text-red-500 transition">
+                    <i class="fas fa-heart text-base"></i>
+                </button>
+
+                <!-- Product Image -->
+                <div class="w-full bg-brand-bg h-[48vh] overflow-hidden flex items-center justify-center relative">
+                    <img id="detailImage" src="" alt="Product Detail" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Information Box -->
+                <div class="p-5 md:p-8 space-y-4">
+                    <div class="flex items-center justify-between gap-2">
+                        <span id="detailCategory" class="text-xs bg-brand-beige text-brand-accent font-bold px-3 py-1 rounded-full capitalize">Category</span>
+                        <span id="detailDiscount" class="bg-brand-accent text-white text-xs font-bold px-2.5 py-1 rounded-full">0% OFF</span>
+                    </div>
+
+                    <h2 id="detailTitle" class="text-xl md:text-3xl font-extrabold text-brand-dark leading-snug">Product Title</h2>
+
+                    <!-- Price Box with Cut MRP -->
+                    <div class="flex items-baseline gap-3 py-1 border-y border-brand-nude/60">
+                        <span id="detailSalePrice" class="text-2xl md:text-3xl font-black text-brand-dark">₹0</span>
+                        <span id="detailOriginalPrice" class="text-sm md:text-base text-gray-400 line-through font-semibold"></span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-1">
+                        <h4 class="text-xs font-bold text-brand-muted uppercase tracking-wider">Product Description</h4>
+                        <p id="detailDescription" class="text-xs md:text-sm text-brand-dark leading-relaxed">Product description...</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3 pt-3">
+                        <button id="detailAddToCartBtn" class="w-full bg-brand-beige hover:bg-brand-nude text-brand-dark py-3 rounded-2xl font-bold text-xs md:text-sm border border-brand-nude shadow-sm transition flex items-center justify-center gap-2">
+                            <i class="fas fa-shopping-bag"></i> Add to Cart
+                        </button>
+                        <button id="detailBuyNowBtn" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white py-3 rounded-2xl font-bold text-xs md:text-sm shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fas fa-bolt"></i> Buy Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Recommended Products Grid -->
+            <div class="space-y-3 pt-4">
+                <div class="flex items-center justify-between border-b border-brand-nude/60 pb-2">
+                    <h3 class="font-bold text-base text-brand-dark flex items-center gap-2">
+                        <i class="fas fa-boxes-packing text-brand-primary"></i> Recommended Items
+                    </h3>
+                    <span class="text-xs text-brand-muted">Scroll down to view more</span>
+                </div>
+                <div id="recommendedGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <!-- Dynamic 2-column grid -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= WISHLIST SCREEN ================= -->
+        <section id="screen-wishlist" class="hidden space-y-4">
+            <div class="flex items-center justify-between border-b border-brand-nude/60 pb-2">
+                <h3 class="font-bold text-lg text-brand-dark flex items-center gap-2">
+                    <i class="fas fa-heart text-red-500"></i> My Wishlist
                 </h3>
-                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-brand-dark">
+                <button onclick="showScreen('home')" class="text-xs font-bold text-brand-primary">Back to Catalog</button>
+            </div>
+            <div id="wishlistGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- Rendered wishlist items -->
+            </div>
+        </section>
+
+        <!-- ================= ORDERS TRACKING SCREEN ================= -->
+        <section id="screen-orders" class="hidden space-y-6">
+            <div class="flex items-center justify-between border-b border-brand-nude/60 pb-2">
+                <h3 class="font-bold text-lg text-brand-dark flex items-center gap-2">
+                    <i class="fas fa-box text-brand-primary"></i> My Orders & Live Status
+                </h3>
+                <button onclick="showScreen('home')" class="text-xs font-bold text-brand-primary">Back to Catalog</button>
+            </div>
+            <div id="ordersList" class="space-y-4">
+                <!-- Dynamic Orders List -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ADMIN PROMOTIONAL ANNOUNCEMENT POPUP MODAL -->
+    <div id="announcementModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-3xl overflow-hidden shadow-2xl border border-brand-nude relative text-center space-y-4 pb-6">
+            <button onclick="closeAnnouncementModal()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-gray-500 hover:text-brand-dark">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+            
+            <div class="w-full h-44 bg-brand-beige overflow-hidden flex items-center justify-center relative">
+                <img id="bannerImage" src="" alt="Promotion" class="w-full h-full object-cover">
+            </div>
+
+            <div class="px-6 space-y-2">
+                <span class="inline-block bg-brand-accent text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider">Special Offer 🎉</span>
+                <h3 id="bannerTitle" class="font-extrabold text-lg text-brand-dark leading-snug">Special Announcement</h3>
+                <p id="bannerMessage" class="text-xs text-brand-muted leading-relaxed">Check out our latest exclusive collection and discount offers today!</p>
+            </div>
+
+            <div class="px-6 pt-2">
+                <button onclick="closeAnnouncementModal()" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white py-3 rounded-2xl font-bold text-xs shadow-md transition">
+                    Explore Offers Now 🌸
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT US MODAL -->
+    <div id="contactModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl space-y-4 border border-brand-nude relative text-center">
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-dark">
+                <i class="fas fa-times text-base"></i>
+            </button>
+            <div class="w-14 h-14 bg-brand-beige rounded-full flex items-center justify-center mx-auto text-brand-primary text-2xl">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div>
+                <h3 class="font-extrabold text-lg text-brand-dark">Contact Us</h3>
+                <p class="text-xs text-brand-muted mt-1">Connect with Petalverse Crafty Girl directly on Instagram for custom craft inquiries!</p>
+            </div>
+            <a href="https://www.instagram.com/petalverse.crafty_girl?psln=YTQ3NXQxOXBwemgw" target="_blank" rel="noopener noreferrer" class="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-amber-500 text-white font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-2 shadow hover:opacity-95 transition">
+                <i class="fab fa-instagram text-base"></i> Open Instagram Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- CART SIDE DRAWER -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex justify-end">
+        <div class="bg-white w-full max-w-md h-full flex flex-col justify-between p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-brand-nude pb-3">
+                <h3 class="font-bold text-base text-brand-dark flex items-center gap-2">
+                    <i class="fas fa-shopping-bag text-brand-accent"></i> Shopping Bag
+                </h3>
+                <button onclick="toggleCartScreen()" class="text-gray-400 hover:text-brand-dark">
                     <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
 
-            <!-- User Info Section -->
-            <div class="space-y-2">
-                <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" alt="Logo" class="w-16 h-16 mx-auto rounded-full border-2 border-brand-primary object-cover">
-                <div id="profileUserStatus">
-                    <!-- Populated dynamically based on login state -->
-                </div>
+            <div id="cartItemsList" class="flex-1 overflow-y-auto space-y-3">
+                <!-- Cart items rendered dynamically -->
             </div>
 
-            <!-- Action Options -->
-            <div class="space-y-2.5 pt-2 border-t border-brand-nude/60">
-                <button onclick="closeProfileModal(); openMyOrders();" class="w-full bg-brand-beige hover:bg-brand-nude text-brand-dark py-2.5 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2">
-                    <i class="fas fa-box"></i> My Orders / मेरे ऑर्डर्स
-                </button>
-
-                <a href="https://www.instagram.com/petalverse.crafty_girl?psln=YTQ3NXQxOXBwemgw" target="_blank" rel="noopener noreferrer" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white py-2.5 rounded-xl font-semibold text-xs shadow transition flex items-center justify-center gap-2">
-                    <i class="fab fa-instagram text-sm"></i> Visit Instagram Account
-                </a>
-
-                <div id="profileAuthButtons" class="pt-2">
-                    <!-- Dynamic Sign Out / Switch Account or Login button -->
+            <div class="border-t border-brand-nude pt-4 space-y-2 text-xs">
+                <div class="flex justify-between text-brand-muted">
+                    <span>Items Subtotal:</span>
+                    <span id="cartSubtotal">₹0</span>
                 </div>
+                <div class="flex justify-between text-brand-muted">
+                    <span>Delivery Charge:</span>
+                    <span id="cartDeliveryCharge">₹0</span>
+                </div>
+                <div class="flex justify-between text-brand-muted">
+                    <span id="cartGstLabel">GST Tax (0%):</span>
+                    <span id="cartGstAmount">₹0</span>
+                </div>
+                <div class="flex justify-between items-center text-sm font-bold text-brand-dark border-t border-brand-beige pt-2">
+                    <span>Grand Total:</span>
+                    <span id="cartTotalPrice" class="text-base text-brand-accent">₹0</span>
+                </div>
+                <button onclick="proceedToCheckout()" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white py-3 rounded-2xl font-bold text-xs shadow transition mt-2">
+                    Proceed to Checkout
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- ================= PHONE AUTH MODAL ================= -->
-    <div id="authModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white max-w-sm w-full rounded-2xl p-6 shadow-2xl text-center space-y-4 border border-brand-nude">
-            <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" alt="Logo" class="w-14 h-14 mx-auto rounded-full border-2 border-brand-primary">
-            <div>
-                <h3 class="font-bold text-base text-brand-dark">Sign In / Register</h3>
-                <p class="text-xs text-brand-muted">Enter 10-digit mobile number to save wishlist & track live orders.</p>
+    <!-- CHECKOUT POP-UP MODAL -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl space-y-4 border border-brand-nude relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-dark">
+                <i class="fas fa-times text-base"></i>
+            </button>
+            
+            <h3 class="font-extrabold text-lg text-brand-dark flex items-center gap-2">
+                <i class="fas fa-truck-fast text-brand-primary"></i> Shipping Details
+            </h3>
+
+            <!-- Itemized Price Summary -->
+            <div id="checkoutSummary" class="bg-brand-bg p-3.5 rounded-2xl border border-brand-nude/60 text-xs text-brand-dark space-y-2">
+                <!-- Items & tax breakdown summary -->
             </div>
 
-            <div class="space-y-3">
+            <form onsubmit="handlePlaceOrder(event)" class="space-y-3 text-xs">
                 <div>
-                    <input type="tel" id="authPhoneInput" maxlength="10" placeholder="Enter 10-digit Mobile Number" 
-                           class="w-full text-center text-sm p-2.5 rounded-xl border border-brand-nude focus:border-brand-primary focus:outline-none tracking-widest font-bold">
-                    <p id="phoneErrorMsg" class="hidden text-[11px] text-red-500 mt-1">कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें (Invalid 10-digit number)</p>
+                    <label class="block font-bold text-brand-dark mb-1">Full Customer Name *</label>
+                    <input type="text" id="custName" required placeholder="Enter full name" class="w-full p-3 rounded-xl border border-brand-nude focus:border-brand-primary focus:outline-none">
                 </div>
-                <button onclick="savePhoneAuth()" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white py-2.5 rounded-xl font-bold text-xs shadow transition">
-                    Continue with Phone Number
-                </button>
+
+                <div>
+                    <label class="block font-bold text-brand-dark mb-1">10-Digit Mobile Number *</label>
+                    <input type="tel" id="custPhone" required maxlength="10" placeholder="9876543210" class="w-full p-3 rounded-xl border border-brand-nude focus:border-brand-primary focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-brand-dark mb-1">Complete Delivery Address *</label>
+                    <textarea id="custAddress" required rows="3" placeholder="House/Flat No., Landmark, Street, Pincode" class="w-full p-3 rounded-xl border border-brand-nude focus:border-brand-primary focus:outline-none"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white py-3 rounded-2xl font-bold text-xs shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fas fa-check-circle"></i> Confirm & Place Order
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PHONE AUTH MODAL -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl space-y-4 border border-brand-nude text-center relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-dark">
+                <i class="fas fa-times text-base"></i>
+            </button>
+            <div class="w-14 h-14 bg-brand-beige rounded-full flex items-center justify-center mx-auto text-brand-accent text-2xl">
+                <i class="fas fa-mobile-screen-button"></i>
             </div>
-            <button onclick="closeAuthModal()" class="text-xs text-gray-400 hover:text-gray-600">Cancel</button>
+            <div>
+                <h3 class="font-extrabold text-base text-brand-dark">Sign In / Register</h3>
+                <p class="text-xs text-brand-muted mt-1">Enter your 10-digit mobile number to save and sync your cart & wishlist.</p>
+            </div>
+            
+            <input type="tel" id="authPhoneInput" maxlength="10" placeholder="10-digit Mobile Number" class="w-full p-3 rounded-xl border border-brand-nude text-center font-bold text-sm focus:border-brand-primary focus:outline-none">
+            <p id="phoneErrorMsg" class="hidden text-[11px] text-red-500 font-bold">Please enter a valid 10-digit phone number</p>
+
+            <button onclick="savePhoneAuth()" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white py-3 rounded-2xl font-bold text-xs shadow transition">
+                Continue with Phone
+            </button>
+        </div>
+    </div>
+
+    <!-- USER PROFILE MODAL -->
+    <div id="profileModal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl space-y-4 border border-brand-nude relative text-center">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-dark">
+                <i class="fas fa-times text-base"></i>
+            </button>
+            
+            <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" class="w-16 h-16 rounded-full mx-auto border-2 border-brand-primary">
+            
+            <div id="profileUserStatus" class="space-y-1">
+                <!-- Dynamic profile text -->
+            </div>
+
+            <div class="space-y-2 pt-2">
+                <button onclick="closeProfileModal(); openMyOrders();" class="w-full bg-brand-beige text-brand-dark py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                    <i class="fas fa-box"></i> View My Orders
+                </button>
+                <button onclick="openContactModal(); closeProfileModal();" class="w-full bg-brand-beige text-brand-dark py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                    <i class="fab fa-instagram"></i> Visit Instagram Profile
+                </button>
+                <div id="profileAuthButtons">
+                    <!-- Auth / Sign out buttons -->
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- FOOTER -->
-    <footer class="mt-auto bg-white border-t border-brand-nude py-6">
-        <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
-            <div class="flex justify-center items-center gap-4">
-                <a href="https://www.instagram.com/petalverse.crafty_girl?psln=YTQ3NXQxOXBwemgw" target="_blank" rel="noopener noreferrer" class="text-brand-dark hover:text-pink-600 flex items-center gap-1.5 text-xs font-semibold">
-                    <i class="fab fa-instagram text-base text-pink-600"></i> Follow us on Instagram
-                </a>
+    <footer class="bg-white border-t border-brand-nude mt-12 py-8 px-4">
+        <div class="max-w-6xl mx-auto text-center space-y-3">
+            <div class="flex items-center justify-center gap-2">
+                <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg" class="w-7 h-7 rounded-full border border-brand-primary">
+                <span class="font-bold text-sm text-brand-dark">Petalverse Crafty Girl</span>
             </div>
-            <p class="text-[11px] text-brand-muted">© Petalverse Crafty Girl. Powered by Firebase Realtime Database Sync.</p>
+            <p class="text-[11px] text-brand-muted">© Petalverse Crafty Girl. All handcrafted items synced in Realtime.</p>
         </div>
     </footer>
 
@@ -260,44 +438,143 @@
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.database();
-            console.log("Firebase Realtime Database initialized successfully.");
+            console.log("Firebase Database connected.");
         } catch (e) {
             console.warn("Firebase Init warning:", e);
         }
 
-        // --- 2. STATE MANAGEMENT (No Dummy Products!) ---
-        let allProducts = []; // Purely from Firebase Realtime DB
+        // --- 2. GLOBAL STATE ---
+        let allProducts = [];
         let currentCategory = 'all';
         let searchQuery = '';
         let currentUserPhone = localStorage.getItem('petalverse_user_phone') || '';
         let cartItems = [];
-        let wishlistItems = JSON.parse(localStorage.getItem('petalverse_wishlist') || '[]');
+        let wishlistItems = [];
         let selectedProduct = null;
         let authPendingAction = null;
 
-        // --- 3. APP LIFECYCLE ON LOAD ---
+        // Dynamic Admin Financial Configs
+        let minOrderAmount = 0;
+        let deliveryCharge = 0;
+        let gstPercentage = 0;
+
+        // --- 3. LIFECYCLE ---
         window.addEventListener('DOMContentLoaded', () => {
+            logVisitorAnalytics();
             updateUserUI();
-            updateWishlistBadge();
+            fetchAdminFinancialConfig();
+            fetchAnnouncementBanner();
             fetchCategoriesFromFirebase();
             fetchProductsFromFirebase();
-            fetchUserOrdersFromFirebase();
+
+            if (currentUserPhone) {
+                syncUserDataFromFirebase();
+            } else {
+                updateWishlistBadge();
+                updateCartBadge();
+            }
         });
 
-        // --- 4. PHONE VALIDATION UTILITY ---
-        function isValid10DigitPhone(phone) {
-            const regex = /^[6-9]\d{9}$/;
-            return regex.test(phone.trim());
+        function logVisitorAnalytics() {
+            if (!db) return;
+            db.ref('analytics/views').push({
+                timestamp: Date.now(),
+                userAgent: navigator.userAgent
+            });
         }
 
-        // --- 5. FIREBASE REALTIME LISTENERS ---
+        function isValid10DigitPhone(phone) {
+            return /^[6-9]\d{9}$/.test(phone.trim());
+        }
+
+        // --- 4. ADMIN FINANCIAL & BANNER CONFIG SYNC ---
+        function fetchAdminFinancialConfig() {
+            if (!db) return;
+            db.ref('config').on('value', (snapshot) => {
+                const cfg = snapshot.val();
+                if (cfg) {
+                    minOrderAmount = Number(cfg.minOrderAmount || 0);
+                    deliveryCharge = Number(cfg.deliveryCharge || 0);
+                    gstPercentage = Number(cfg.gstPercentage || 0);
+                    if (!document.getElementById('cartDrawer').classList.contains('hidden')) {
+                        renderCartDrawer();
+                    }
+                }
+            });
+        }
+
+        function fetchAnnouncementBanner() {
+            if (!db) return;
+            db.ref('announcements').on('value', (snapshot) => {
+                const banner = snapshot.val();
+                if (banner && banner.active) {
+                    document.getElementById('bannerTitle').textContent = banner.title || "Special Offer";
+                    document.getElementById('bannerMessage').textContent = banner.message || "Check out our latest offers!";
+                    if (banner.imageUrl) {
+                        document.getElementById('bannerImage').src = banner.imageUrl;
+                    } else {
+                        document.getElementById('bannerImage').src = "https://res.cloudinary.com/vijvpsmy/image/upload/v1793903758/sfw2fzvj5ysjionoujwa.jpg";
+                    }
+                    
+                    // Trigger modal & confetti celebration effect
+                    document.getElementById('announcementModal').classList.remove('hidden');
+                    if (window.confetti) {
+                        confetti({
+                            particleCount: 70,
+                            spread: 60,
+                            origin: { y: 0.6 }
+                        });
+                    }
+                }
+            });
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').classList.add('hidden');
+        }
+
+        // --- 5. USER PERSISTENT DATA SYNC ---
+        function syncUserDataFromFirebase() {
+            if (!currentUserPhone || !db) return;
+
+            // Realtime Sync Wishlist from /users/{phone}/wishlist
+            db.ref(`users/${currentUserPhone}/wishlist`).on('value', (snapshot) => {
+                const data = snapshot.val();
+                wishlistItems = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                updateWishlistBadge();
+                renderProducts(allProducts);
+            });
+
+            // Realtime Sync Cart from /users/{phone}/cart
+            db.ref(`users/${currentUserPhone}/cart`).on('value', (snapshot) => {
+                const data = snapshot.val();
+                cartItems = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                updateCartBadge();
+                if (!document.getElementById('cartDrawer').classList.contains('hidden')) {
+                    renderCartDrawer();
+                }
+            });
+
+            fetchUserOrdersFromFirebase();
+        }
+
+        function saveUserCartToFirebase() {
+            if (!currentUserPhone || !db) return;
+            db.ref(`users/${currentUserPhone}/cart`).set(cartItems);
+        }
+
+        function saveUserWishlistToFirebase() {
+            if (!currentUserPhone || !db) return;
+            db.ref(`users/${currentUserPhone}/wishlist`).set(wishlistItems);
+        }
+
         function fetchCategoriesFromFirebase() {
             if (!db) return;
             db.ref('categories').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     const bar = document.getElementById('categoriesBar');
-                    bar.innerHTML = `<button onclick="filterCategory('all')" class="cat-btn px-4 py-2 rounded-full ${currentCategory === 'all' ? 'bg-brand-dark text-white' : 'bg-white border border-brand-nude text-brand-dark'} font-medium whitespace-nowrap shadow-sm">All Crafts</button>`;
+                    bar.innerHTML = `<button onclick="filterCategory('all')" class="cat-btn px-4 py-2 rounded-full ${currentCategory === 'all' ? 'bg-brand-dark text-white' : 'bg-white border border-brand-nude text-brand-dark'} font-medium whitespace-nowrap shadow-sm">All</button>`;
                     
                     let catList = Array.isArray(data) ? data : Object.values(data);
                     catList.forEach(cat => {
@@ -328,18 +605,13 @@
                             image: item.imageUrl || item.image || "https://placehold.co/400x400/F3E9DD/3E2723?text=Petalverse",
                             originalPrice: item.originalPrice ? Number(item.originalPrice) : null,
                             salePrice: Number(item.price || item.salePrice || 0),
-                            description: item.description || "Beautiful handmade item crafted with love.",
+                            description: item.description || "Beautiful handmade item crafted with care.",
                             timestamp: item.timestamp || 0
                         });
                     });
-
-                    // Sort latest added products at the top
                     allProducts.sort((a, b) => b.timestamp - a.timestamp);
                 }
                 renderProducts(allProducts);
-            }, (err) => {
-                console.error("Firebase Products Read Error:", err);
-                renderProducts([]);
             });
         }
 
@@ -364,7 +636,7 @@
             });
         }
 
-        // --- 6. RENDER PRODUCTS GRID WITH CLEAN EMPTY STATE ---
+        // --- 6. RENDER PRODUCTS ---
         function renderProducts(productsList) {
             const grid = document.getElementById('productGrid');
             const countLabel = document.getElementById('productCount');
@@ -376,15 +648,15 @@
                 return matchCat && matchSearch;
             });
 
-            countLabel.textContent = `${filtered.length} items available`;
+            countLabel.textContent = `${filtered.length} items`;
             grid.innerHTML = '';
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-16 text-brand-muted space-y-3 bg-white rounded-2xl border border-brand-nude/60 p-6">
                         <i class="fas fa-store-slash text-4xl text-brand-primary"></i>
-                        <h4 class="font-bold text-base text-brand-dark">अभी कोई प्रोडक्ट्स उपलब्ध नहीं हैं</h4>
-                        <p class="text-xs text-brand-muted max-w-xs mx-auto">No products currently available in this view. Check back soon for new handcrafted creations!</p>
+                        <h4 class="font-bold text-base text-brand-dark">No Products Available</h4>
+                        <p class="text-xs text-brand-muted max-w-xs mx-auto">Please check back later for new handcrafted products!</p>
                     </div>
                 `;
                 return;
@@ -428,40 +700,51 @@
             });
         }
 
-        // --- 7. NAVIGATION & SCREEN SWITCHING ---
-        function showScreen(screenName) {
-            document.getElementById('screen-home').classList.add('hidden');
-            document.getElementById('screen-detail').classList.add('hidden');
-            document.getElementById('screen-orders').classList.add('hidden');
-            document.getElementById('screen-wishlist').classList.add('hidden');
-
-            if (screenName === 'home') document.getElementById('screen-home').classList.remove('hidden');
-            if (screenName === 'detail') document.getElementById('screen-detail').classList.remove('hidden');
-            if (screenName === 'orders') document.getElementById('screen-orders').classList.remove('hidden');
-            if (screenName === 'wishlist') document.getElementById('screen-wishlist').classList.remove('hidden');
-
+        // --- 7. NAVIGATION CONTROLLER ---
+        function showScreen(screenId) {
+            ['home', 'detail', 'wishlist', 'orders'].forEach(s => {
+                const el = document.getElementById(`screen-${s}`);
+                if (el) {
+                    if (s === screenId) el.classList.remove('hidden');
+                    else el.classList.add('hidden');
+                }
+            });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // --- 8. PRODUCT DETAIL VIEW ---
+        function openContactModal() {
+            document.getElementById('contactModal').classList.remove('hidden');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').classList.add('hidden');
+        }
+
+        // --- 8. HALF-SCREEN PRODUCT DETAIL VIEW ---
         function openProductDetail(productId) {
             selectedProduct = allProducts.find(p => p.id === productId);
             if (!selectedProduct) return;
 
             document.getElementById('detailImage').src = selectedProduct.image;
             document.getElementById('detailTitle').textContent = selectedProduct.title;
+            document.getElementById('detailCategory').textContent = selectedProduct.category || "Craft";
             document.getElementById('detailSalePrice').textContent = `₹${selectedProduct.salePrice}`;
-            document.getElementById('detailOriginalPrice').textContent = selectedProduct.originalPrice ? `₹${selectedProduct.originalPrice}` : '';
             
-            const disc = selectedProduct.originalPrice && selectedProduct.originalPrice > selectedProduct.salePrice
-                ? Math.round(((selectedProduct.originalPrice - selectedProduct.salePrice) / selectedProduct.originalPrice) * 100) 
-                : 0;
-            document.getElementById('detailDiscount').textContent = `${disc}% OFF`;
-            document.getElementById('detailDescription').textContent = selectedProduct.description || "Aesthetic handcrafted item crafted with care by Petalverse.";
+            if (selectedProduct.originalPrice && selectedProduct.originalPrice > selectedProduct.salePrice) {
+                document.getElementById('detailOriginalPrice').textContent = `₹${selectedProduct.originalPrice}`;
+                const disc = Math.round(((selectedProduct.originalPrice - selectedProduct.salePrice) / selectedProduct.originalPrice) * 100);
+                document.getElementById('detailDiscount').textContent = `${disc}% OFF`;
+                document.getElementById('detailDiscount').classList.remove('hidden');
+            } else {
+                document.getElementById('detailOriginalPrice').textContent = '';
+                document.getElementById('detailDiscount').classList.add('hidden');
+            }
+            
+            document.getElementById('detailDescription').textContent = selectedProduct.description || "Aesthetic handcrafted item created with love by Petalverse.";
 
             const isLiked = wishlistItems.includes(selectedProduct.id);
             const wishBtn = document.getElementById('detailWishlistBtn');
-            wishBtn.className = `absolute top-3 right-3 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow flex items-center justify-center text-lg ${isLiked ? 'text-red-500' : 'text-gray-400'}`;
+            wishBtn.className = `absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-md flex items-center justify-center text-lg ${isLiked ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition`;
             wishBtn.onclick = () => toggleWishlist(selectedProduct.id);
 
             document.getElementById('detailAddToCartBtn').onclick = () => addToCart(selectedProduct.id);
@@ -474,22 +757,52 @@
         function renderRecommendations(currentId) {
             const recGrid = document.getElementById('recommendedGrid');
             recGrid.innerHTML = '';
-            const others = allProducts.filter(p => p.id !== currentId).slice(0, 4);
+            const others = allProducts.filter(p => p.id !== currentId);
+
+            if (others.length === 0) {
+                recGrid.innerHTML = `<p class="col-span-full text-xs text-brand-muted text-center py-6">No other products available.</p>`;
+                return;
+            }
 
             others.forEach(item => {
+                const isLiked = wishlistItems.includes(item.id);
+                const discount = item.originalPrice && item.originalPrice > item.salePrice
+                    ? Math.round(((item.originalPrice - item.salePrice) / item.originalPrice) * 100) 
+                    : 0;
+
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-xl p-2 border border-brand-nude/60 cursor-pointer hover:shadow-sm transition";
-                card.onclick = () => openProductDetail(item.id);
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-brand-nude/60 flex flex-col justify-between hover:shadow-md transition group";
                 card.innerHTML = `
-                    <img src="${item.image}" class="w-full aspect-square object-cover rounded-lg mb-2">
-                    <h5 class="text-xs font-semibold text-brand-dark line-clamp-1">${item.title}</h5>
-                    <p class="text-xs font-bold text-brand-accent">₹${item.salePrice}</p>
+                    <div class="relative aspect-square bg-brand-bg overflow-hidden cursor-pointer" onclick="openProductDetail('${item.id}')">
+                        <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/400x400/F3E9DD/3E2723?text=Petalverse'">
+                        <button onclick="event.stopPropagation(); toggleWishlist('${item.id}')" class="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/80 backdrop-blur shadow flex items-center justify-center text-xs ${isLiked ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        ${discount > 0 ? `<span class="absolute bottom-2 left-2 bg-brand-accent text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">${discount}% OFF</span>` : ''}
+                    </div>
+                    <div class="p-3 flex-1 flex flex-col justify-between space-y-2">
+                        <div class="cursor-pointer" onclick="openProductDetail('${item.id}')">
+                            <h4 class="font-semibold text-xs text-brand-dark line-clamp-1">${item.title}</h4>
+                            <div class="flex items-baseline gap-1.5 mt-1">
+                                <span class="font-extrabold text-xs text-brand-dark">₹${item.salePrice}</span>
+                                ${item.originalPrice ? `<span class="text-[10px] text-gray-400 line-through">₹${item.originalPrice}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5 pt-1">
+                            <button onclick="addToCart('${item.id}')" class="w-full bg-brand-beige hover:bg-brand-nude text-brand-dark text-[10px] font-semibold py-1 rounded-lg border border-brand-nude transition">
+                                + Cart
+                            </button>
+                            <button onclick="buyNowSingle('${item.id}')" class="w-full bg-brand-primary hover:bg-brand-primaryHover text-white text-[10px] font-semibold py-1 rounded-lg shadow-sm transition">
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
                 `;
                 recGrid.appendChild(card);
             });
         }
 
-        // --- 9. WISHLIST FEATURE & AUTH CHECK ---
+        // --- 9. WISHLIST ACTIONS ---
         function toggleWishlist(productId) {
             if (!currentUserPhone) {
                 authPendingAction = () => toggleWishlist(productId);
@@ -504,7 +817,7 @@
                 wishlistItems.push(productId);
             }
 
-            localStorage.setItem('petalverse_wishlist', JSON.stringify(wishlistItems));
+            saveUserWishlistToFirebase();
             updateWishlistBadge();
             renderProducts(allProducts);
 
@@ -569,8 +882,14 @@
             });
         }
 
-        // --- 10. CART & CHECKOUT FLOW ---
+        // --- 10. CART & ITEMIZED PRICE CALCULATOR ---
         function addToCart(productId) {
+            if (!currentUserPhone) {
+                authPendingAction = () => addToCart(productId);
+                openAuthModal();
+                return;
+            }
+
             const item = allProducts.find(p => p.id === productId);
             if (!item) return;
 
@@ -580,6 +899,7 @@
             } else {
                 cartItems.push({ ...item, qty: 1 });
             }
+            saveUserCartToFirebase();
             updateCartBadge();
             toggleCartScreen(true);
         }
@@ -596,6 +916,12 @@
         }
 
         function toggleCartScreen(forceOpen = false) {
+            if (!currentUserPhone && (forceOpen || document.getElementById('cartDrawer').classList.contains('hidden'))) {
+                authPendingAction = () => toggleCartScreen(true);
+                openAuthModal();
+                return;
+            }
+
             const drawer = document.getElementById('cartDrawer');
             if (forceOpen || drawer.classList.contains('hidden')) {
                 renderCartDrawer();
@@ -605,12 +931,24 @@
             }
         }
 
+        function calculateCartTotals() {
+            const itemsSubtotal = cartItems.reduce((acc, curr) => acc + (curr.salePrice * curr.qty), 0);
+            const gstAmount = itemsSubtotal > 0 ? Math.round((itemsSubtotal * gstPercentage) / 100) : 0;
+            const grandTotal = itemsSubtotal > 0 ? (itemsSubtotal + deliveryCharge + gstAmount) : 0;
+
+            return {
+                itemsSubtotal,
+                deliveryCharge: itemsSubtotal > 0 ? deliveryCharge : 0,
+                gstAmount,
+                gstPercentage,
+                grandTotal
+            };
+        }
+
         function renderCartDrawer() {
             const list = document.getElementById('cartItemsList');
-            const totalLabel = document.getElementById('cartTotalPrice');
             list.innerHTML = '';
 
-            let total = 0;
             if (cartItems.length === 0) {
                 list.innerHTML = `
                     <div class="text-center py-12 text-brand-muted space-y-2">
@@ -618,33 +956,35 @@
                         <p class="text-sm font-medium">Your bag is empty.</p>
                     </div>
                 `;
-                totalLabel.textContent = `₹0`;
-                return;
+            } else {
+                cartItems.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = "flex items-center gap-3 bg-brand-bg p-2.5 rounded-xl border border-brand-nude/60";
+                    row.innerHTML = `
+                        <img src="${item.image}" class="w-14 h-14 object-cover rounded-lg">
+                        <div class="flex-1">
+                            <h5 class="text-xs font-semibold text-brand-dark line-clamp-1">${item.title}</h5>
+                            <p class="text-xs font-bold text-brand-accent">₹${item.salePrice}</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <button onclick="changeQty('${item.id}', -1)" class="w-5 h-5 bg-white border border-brand-nude rounded text-xs font-bold">-</button>
+                                <span class="text-xs font-bold">${item.qty}</span>
+                                <button onclick="changeQty('${item.id}', 1)" class="w-5 h-5 bg-white border border-brand-nude rounded text-xs font-bold">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 text-sm p-1">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    list.appendChild(row);
+                });
             }
 
-            cartItems.forEach(item => {
-                total += item.salePrice * item.qty;
-                const row = document.createElement('div');
-                row.className = "flex items-center gap-3 bg-brand-bg p-2.5 rounded-xl border border-brand-nude/60";
-                row.innerHTML = `
-                    <img src="${item.image}" class="w-14 h-14 object-cover rounded-lg">
-                    <div class="flex-1">
-                        <h5 class="text-xs font-semibold text-brand-dark line-clamp-1">${item.title}</h5>
-                        <p class="text-xs font-bold text-brand-accent">₹${item.salePrice}</p>
-                        <div class="flex items-center gap-2 mt-1">
-                            <button onclick="changeQty('${item.id}', -1)" class="w-5 h-5 bg-white border border-brand-nude rounded text-xs">-</button>
-                            <span class="text-xs font-bold">${item.qty}</span>
-                            <button onclick="changeQty('${item.id}', 1)" class="w-5 h-5 bg-white border border-brand-nude rounded text-xs">+</button>
-                        </div>
-                    </div>
-                    <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 text-sm p-1">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                list.appendChild(row);
-            });
-
-            totalLabel.textContent = `₹${total}`;
+            const totals = calculateCartTotals();
+            document.getElementById('cartSubtotal').textContent = `₹${totals.itemsSubtotal}`;
+            document.getElementById('cartDeliveryCharge').textContent = totals.itemsSubtotal > 0 ? `₹${totals.deliveryCharge}` : `₹0`;
+            document.getElementById('cartGstLabel').textContent = `GST Tax (${totals.gstPercentage}%):`;
+            document.getElementById('cartGstAmount').textContent = `₹${totals.gstAmount}`;
+            document.getElementById('cartTotalPrice').textContent = `₹${totals.grandTotal}`;
         }
 
         function changeQty(id, delta) {
@@ -654,20 +994,28 @@
             if (item.qty <= 0) {
                 cartItems = cartItems.filter(c => c.id !== id);
             }
+            saveUserCartToFirebase();
             updateCartBadge();
             renderCartDrawer();
         }
 
         function removeFromCart(id) {
             cartItems = cartItems.filter(c => c.id !== id);
+            saveUserCartToFirebase();
             updateCartBadge();
             renderCartDrawer();
         }
 
         function buyNowSingle(productId) {
+            if (!currentUserPhone) {
+                authPendingAction = () => buyNowSingle(productId);
+                openAuthModal();
+                return;
+            }
             const item = allProducts.find(p => p.id === productId);
             if (!item) return;
             cartItems = [{ ...item, qty: 1 }];
+            saveUserCartToFirebase();
             updateCartBadge();
             proceedToCheckout();
         }
@@ -675,31 +1023,39 @@
         function proceedToCheckout() {
             if (cartItems.length === 0) return;
 
-            if (!currentUserPhone) {
-                authPendingAction = () => proceedToCheckout();
-                openAuthModal();
+            const totals = calculateCartTotals();
+
+            // Minimum order budget threshold verification
+            if (minOrderAmount > 0 && totals.itemsSubtotal < minOrderAmount) {
+                alert(`Minimum order amount threshold is ₹${minOrderAmount}. Please add ₹${minOrderAmount - totals.itemsSubtotal} more worth of items to checkout.`);
                 return;
             }
 
             document.getElementById('cartDrawer').classList.add('hidden');
             const summary = document.getElementById('checkoutSummary');
-            let total = 0;
+            
             let itemsHtml = cartItems.map(i => {
-                total += i.salePrice * i.qty;
                 return `<div class="flex justify-between"><span>${i.title} (x${i.qty})</span><span class="font-bold">₹${i.salePrice * i.qty}</span></div>`;
             }).join('');
 
             summary.innerHTML = `
-                <div class="space-y-1">
+                <div class="space-y-1.5">
                     ${itemsHtml}
-                    <div class="border-t border-brand-nude pt-1 flex justify-between font-bold text-sm text-brand-dark">
-                        <span>Total Payable</span>
-                        <span>₹${total}</span>
+                    <div class="border-t border-brand-nude pt-2 space-y-1 text-brand-muted">
+                        <div class="flex justify-between"><span>Items Subtotal</span><span>₹${totals.itemsSubtotal}</span></div>
+                        <div class="flex justify-between"><span>Delivery Fee</span><span>₹${totals.deliveryCharge}</span></div>
+                        <div class="flex justify-between"><span>GST (${totals.gstPercentage}%)</span><span>₹${totals.gstAmount}</span></div>
+                        <div class="border-t border-brand-beige pt-1.5 flex justify-between font-bold text-sm text-brand-dark">
+                            <span>Grand Total</span>
+                            <span class="text-brand-accent">₹${totals.grandTotal}</span>
+                        </div>
                     </div>
                 </div>
             `;
 
-            document.getElementById('custPhone').value = currentUserPhone;
+            if (currentUserPhone) {
+                document.getElementById('custPhone').value = currentUserPhone;
+            }
             document.getElementById('checkoutModal').classList.remove('hidden');
         }
 
@@ -707,7 +1063,7 @@
             document.getElementById('checkoutModal').classList.add('hidden');
         }
 
-        // --- 11. SUBMIT ORDER TO FIREBASE REALTIME DB ---
+        // --- 11. SUBMIT ORDER DIRECTLY TO FIREBASE `/orders` ---
         function handlePlaceOrder(event) {
             event.preventDefault();
 
@@ -718,49 +1074,58 @@
             if (!name || !address) return;
 
             if (!isValid10DigitPhone(phone)) {
-                alert("कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें (Invalid 10-digit number)");
+                alert("Please enter a valid 10-digit mobile number.");
                 return;
             }
 
-            const totalAmount = cartItems.reduce((acc, curr) => acc + (curr.salePrice * curr.qty), 0);
+            const totals = calculateCartTotals();
+
+            if (minOrderAmount > 0 && totals.itemsSubtotal < minOrderAmount) {
+                alert(`Minimum order amount threshold is ₹${minOrderAmount}. Please add more items.`);
+                return;
+            }
+
+            currentUserPhone = phone;
+            localStorage.setItem('petalverse_user_phone', phone);
+            updateUserUI();
+
+            if (db) {
+                db.ref(`analytics/users/${phone}`).set({
+                    name: name,
+                    phone: phone,
+                    lastActive: Date.now()
+                });
+            }
             
             const newOrder = {
                 customerName: name,
                 phone: phone,
                 address: address,
                 items: cartItems,
-                totalAmount: totalAmount,
-                statusStep: 1, // 1 to 5 status steps for Admin control
+                pricing: totals,
+                totalAmount: totals.grandTotal,
+                statusStep: 1, // Step 1: Order Ready -> Step 5: Delivered
                 estimatedDelivery: "3-5 Days",
                 createdAt: new Date().toISOString()
             };
 
-            if (db) {
-                const ordersRef = db.ref('orders');
-                ordersRef.push(newOrder).then(() => {
-                    alert("Order placed successfully! 🌸");
-                    cartItems = [];
-                    updateCartBadge();
-                    closeCheckoutModal();
-                    openMyOrders();
-                }).catch(err => {
-                    console.error("Order save error:", err);
-                    alert("Order placed!");
-                    cartItems = [];
-                    updateCartBadge();
-                    closeCheckoutModal();
-                    openMyOrders();
-                });
-            } else {
-                alert("Order placed successfully!");
+            const completeOrderSuccess = () => {
+                alert("Order placed successfully! 🌸 Your items are being prepared.");
                 cartItems = [];
+                saveUserCartToFirebase();
                 updateCartBadge();
                 closeCheckoutModal();
                 openMyOrders();
+            };
+
+            if (db) {
+                db.ref('orders').push(newOrder).then(completeOrderSuccess).catch(completeOrderSuccess);
+            } else {
+                completeOrderSuccess();
             }
         }
 
-        // --- 12. ORDER TRACKING & 5-STEP LINE DISPLAY ---
+        // --- 12. MY ORDERS & STEP TRACKER ---
         function openMyOrders() {
             if (!currentUserPhone) {
                 authPendingAction = () => openMyOrders();
@@ -779,7 +1144,7 @@
                 container.innerHTML = `
                     <div class="bg-white p-8 rounded-2xl text-center border border-brand-nude text-brand-muted space-y-2">
                         <i class="fas fa-box text-4xl text-brand-primary"></i>
-                        <p class="text-sm font-medium">आपकी कोई एक्टिव ऑर्डर नहीं है / No orders placed yet.</p>
+                        <p class="text-sm font-medium">No active orders placed yet.</p>
                     </div>
                 `;
                 return;
@@ -810,31 +1175,27 @@
                     <div class="flex flex-wrap justify-between items-center gap-2 border-b border-brand-nude pb-3">
                         <div>
                             <span class="text-[10px] uppercase font-bold text-brand-muted">Order ID: #${order.id ? order.id.slice(-6) : 'OFFLINE'}</span>
-                            <h4 class="font-bold text-sm text-brand-dark">Total: ₹${order.totalAmount}</h4>
+                            <h4 class="font-bold text-sm text-brand-dark">Grand Total: ₹${order.totalAmount}</h4>
                         </div>
                         <span class="bg-brand-beige text-brand-accent text-xs font-semibold px-2.5 py-1 rounded-full">
                             Est. Delivery: ${order.estimatedDelivery || '3-5 Days'}
                         </span>
                     </div>
 
-                    <!-- Items Summary -->
                     <div class="bg-brand-bg p-3 rounded-xl space-y-1.5 border border-brand-nude/40">
                         ${itemsListHtml}
                     </div>
 
-                    <!-- 5-STEP REALTIME STATUS TRACKER -->
+                    <!-- 5-Step Progress Tracker Bar -->
                     <div class="py-4">
                         <h5 class="text-xs font-bold text-brand-dark mb-4 flex items-center gap-1.5">
-                            <i class="fas fa-truck-loading text-brand-primary"></i> Live Shipping Status:
+                            <i class="fas fa-truck-loading text-brand-primary"></i> Shipping Status Tracker:
                         </h5>
                         <div class="relative flex items-center justify-between max-w-xl mx-auto px-2">
-                            <!-- Background Progress Line -->
                             <div class="absolute top-1/2 left-4 right-4 h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
-                            <!-- Active Progress Line -->
                             <div class="absolute top-1/2 left-4 h-1 bg-brand-primary -translate-y-1/2 z-0 transition-all duration-500" 
                                  style="width: ${((currentStep - 1) / (steps.length - 1)) * 90}%;"></div>
 
-                            <!-- 5 Progress Dots -->
                             ${steps.map((label, index) => {
                                 const stepNum = index + 1;
                                 const isActive = stepNum <= currentStep;
@@ -856,7 +1217,7 @@
             });
         }
 
-        // --- 13. AUTHENTICATION & PROFILE MODAL LOGIC ---
+        // --- 13. AUTH & PROFILE MODALS ---
         function openAuthModal() {
             document.getElementById('authModal').classList.remove('hidden');
         }
@@ -879,8 +1240,17 @@
             err.classList.add('hidden');
             currentUserPhone = phone;
             localStorage.setItem('petalverse_user_phone', phone);
+            
+            if (db) {
+                db.ref(`analytics/users/${phone}`).set({
+                    phone: phone,
+                    lastActive: Date.now()
+                });
+            }
+
             updateUserUI();
             closeAuthModal();
+            syncUserDataFromFirebase();
 
             if (authPendingAction) {
                 const act = authPendingAction;
@@ -905,21 +1275,21 @@
             if (currentUserPhone) {
                 statusBox.innerHTML = `
                     <h4 class="font-bold text-sm text-brand-dark">+91 ${currentUserPhone}</h4>
-                    <span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Logged In / फोन से कनेक्टेड</span>
+                    <span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Account Active</span>
                 `;
                 authBtnsBox.innerHTML = `
                     <button onclick="handleSignOut()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-xl text-xs font-semibold transition">
-                        Sign Out / लॉग आउट करें
+                        Sign Out
                     </button>
                 `;
             } else {
                 statusBox.innerHTML = `
                     <h4 class="font-bold text-sm text-brand-dark">Guest User</h4>
-                    <p class="text-xs text-brand-muted">लॉग इन नहीं हैं</p>
+                    <p class="text-xs text-brand-muted">Not Signed In</p>
                 `;
                 authBtnsBox.innerHTML = `
                     <button onclick="closeProfileModal(); openAuthModal();" class="w-full bg-brand-primary text-white py-2 rounded-xl text-xs font-semibold shadow hover:bg-brand-primaryHover transition">
-                        Log In with Mobile Number
+                        Sign In with Phone Number
                     </button>
                 `;
             }
@@ -932,8 +1302,15 @@
         }
 
         function handleSignOut() {
+            if (currentUserPhone) {
+                localStorage.removeItem(`petalverse_wishlist_${currentUserPhone}`);
+            }
             localStorage.removeItem('petalverse_user_phone');
             currentUserPhone = '';
+            cartItems = [];
+            wishlistItems = [];
+            updateCartBadge();
+            updateWishlistBadge();
             updateUserUI();
             closeProfileModal();
             showScreen('home');
@@ -947,11 +1324,6 @@
 
         function handleSearch() {
             searchQuery = document.getElementById('searchInput').value;
-            renderProducts(allProducts);
-        }
-
-        function handleSearchMobile() {
-            searchQuery = document.getElementById('mobileSearchInput').value;
             renderProducts(allProducts);
         }
     </script>
