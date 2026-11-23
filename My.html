@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ You are special! ✨</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0F0B15',
+                        cardDark: '#1E1629',
+                        roseAccent: '#FF6584',
+                        softPink: '#FFB6C1',
+                        deepWine: '#4A1525',
+                        goldGlow: '#FFD700',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        handwriting: ['Caveat', 'cursive'],
+                        script: ['Great Vibes', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: radial-gradient(circle at center, #231535 0%, #0F0B15 100%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+            color: #FDFBF7;
+            user-select: none;
+        }
+
+        #petalCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 101, 132, 0.5)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 25px rgba(255, 101, 132, 0.8)); transform: scale(1.04); }
+        }
+        .animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+
+        .page-step {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .page-hidden {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            transform: scale(0.95);
+        }
+
+        .polaroid-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .polaroid-card:hover {
+            transform: scale(1.06) rotate(0deg) !important;
+            z-index: 40;
+            box-shadow: 0 20px 40px rgba(255, 101, 132, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center relative p-4 md:p-8">
+
+    <canvas id="petalCanvas"></canvas>
+
+    <!-- Hidden YouTube Audio Players -->
+    <div id="audio-container" class="fixed -top-96 -left-96 opacity-0 pointer-events-none">
+        <iframe id="bg-audio-1" width="200" height="200" src="https://www.youtube.com/embed/WQhkI8PMEqk?enablejsapi=1&autoplay=1&loop=1&playlist=WQhkI8PMEqk" title="Background Track 1" allow="autoplay"></iframe>
+        <iframe id="bg-audio-2" width="200" height="200" src="https://www.youtube.com/embed/f5-IY_Ja1RM?enablejsapi=1&loop=1&playlist=f5-IY_Ja1RM" title="Typewriter Track 2" allow="autoplay"></iframe>
+    </div>
+
+    <!-- CONTROLS HEADER (Language Toggle & Audio Mute) -->
+    <div class="fixed top-4 right-4 z-50 flex items-center space-x-2">
+        <!-- Language Switch Button -->
+        <button onclick="toggleLanguage()" id="langToggleBtn" class="flex items-center space-x-1.5 bg-[#1E1629]/90 border border-roseAccent/40 hover:border-roseAccent px-3 py-2 rounded-full text-xs font-bold text-roseAccent shadow-lg backdrop-blur-md transition">
+            <i class="fa-solid fa-globe"></i>
+            <span id="langText">हिंदी / Eng</span>
+        </button>
+
+        <!-- Audio Toggle Button -->
+        <button onclick="toggleAudio()" id="audioToggleBtn" class="flex items-center space-x-1.5 bg-[#1E1629]/90 border border-roseAccent/40 hover:border-roseAccent px-3 py-2 rounded-full text-xs font-semibold text-softPink shadow-lg backdrop-blur-md transition">
+            <i class="fa-solid fa-volume-high text-roseAccent animate-pulse" id="audioIcon"></i>
+            <span id="audioText">Music</span>
+        </button>
+    </div>
+
+    <!-- BROWSER DECORATION BAR -->
+    <div class="w-full max-w-md mx-auto z-20 mb-4 flex justify-between items-center text-xs text-gray-400 px-3 py-1 bg-black/40 rounded-t-xl border-t border-x border-white/10 backdrop-blur-sm">
+        <div class="flex items-center space-x-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+            <span class="ml-2 font-mono text-[11px] text-roseAccent" id="navTitle">❤️ You are special!</span>
+        </div>
+        <div class="font-mono text-[11px] text-gray-400">localhost:3000</div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="relative z-20 w-full max-w-md min-h-[75vh] flex flex-col items-center justify-center text-center my-auto">
+
+        <!-- ================= STEP 1: WELCOME SCREEN ================= -->
+        <section id="step1" class="page-step flex flex-col items-center justify-center w-full">
+            <!-- Clean Anime Icon Header instead of generic photo -->
+            <div class="w-32 h-32 md:w-36 md:h-36 rounded-full bg-gradient-to-tr from-roseAccent via-pink-400 to-purple-500 flex items-center justify-center animate-pulse-glow mb-6 shadow-2xl text-white">
+                <i class="fa-solid fa-wand-magic-sparkles text-5xl"></i>
+            </div>
+
+            <h1 id="t1_heading" class="font-serif text-3xl md:text-4xl font-bold text-white mb-2 tracking-wide">
+                Hey Beautiful
+            </h1>
+            <p id="t1_sub" class="font-handwriting text-2xl text-softPink mb-8 tracking-wider">
+                Do you even know how cute you are?
+            </p>
+
+            <button onclick="startCutenessMeter()" class="group px-8 py-3.5 bg-gradient-to-r from-roseAccent to-pink-500 hover:from-pink-500 hover:to-roseAccent text-white font-semibold rounded-full shadow-lg hover:shadow-roseAccent/40 transition-all transform hover:-translate-y-0.5 flex items-center space-x-2">
+                <span id="t1_btn">Open My Heart</span>
+                <i class="fa-solid fa-heart text-white group-hover:scale-125 transition-transform"></i>
+            </button>
+        </section>
+
+
+        <!-- ================= STEP 2: MEASURING CUTENESS SCREEN ================= -->
+        <section id="step2" class="page-step page-hidden flex flex-col items-center justify-center w-full px-4">
+            <div class="w-full bg-[#1E1629] p-8 rounded-3xl border border-roseAccent/30 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-roseAccent/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <h3 id="t2_heading" class="font-serif text-2xl font-bold text-white mb-6">
+                    Measuring your cuteness...
+                </h3>
+
+                <div id="cutenessPercentage" class="font-mono text-5xl font-extrabold text-roseAccent mb-6">
+                    0%
+                </div>
+
+                <div class="w-full bg-black/50 h-4 rounded-full overflow-hidden p-0.5 mb-6 border border-white/10">
+                    <div id="cutenessProgressBar" class="h-full bg-gradient-to-r from-roseAccent to-pink-400 rounded-full transition-all duration-300 w-0"></div>
+                </div>
+
+                <p id="cutenessSubtext" class="font-handwriting text-xl text-softPink">
+                    Calculating cuteness...
+                </p>
+            </div>
+        </section>
+
+
+        <!-- ================= STEP 3: TAPPABLE COMPLIMENT CARDS ================= -->
+        <section id="step3" class="page-step page-hidden flex flex-col items-center justify-center w-full px-2">
+            <div class="w-16 h-16 rounded-full bg-roseAccent/20 flex items-center justify-center mb-3 text-roseAccent animate-pulse">
+                <i class="fa-solid fa-heart text-3xl"></i>
+            </div>
+            
+            <h2 id="t3_heading" class="font-serif text-2xl md:text-3xl font-bold text-white mb-1">
+                Just for you
+            </h2>
+            <p id="t3_sub" class="font-handwriting text-lg text-softPink mb-6">
+                Tap each one to reveal
+            </p>
+
+            <!-- 5 Interactive Compliment Bars -->
+            <div class="w-full space-y-3 mb-8" id="complimentsList">
+                <div onclick="revealCard(this, 'c1')" class="compliment-card bg-[#1E1629] hover:bg-[#2A1F3D] border border-roseAccent/30 p-4 rounded-2xl cursor-pointer transition shadow-md flex justify-between items-center group">
+                    <span class="compliment-text text-gray-400 group-hover:text-white font-medium text-sm" data-en="Tap to reveal" data-hi="खोलने के लिए टैप करें">Tap to reveal</span>
+                    <i class="fa-regular fa-heart text-roseAccent"></i>
+                </div>
+
+                <div onclick="revealCard(this, 'c2')" class="compliment-card bg-[#1E1629] hover:bg-[#2A1F3D] border border-roseAccent/30 p-4 rounded-2xl cursor-pointer transition shadow-md flex justify-between items-center group">
+                    <span class="compliment-text text-gray-400 group-hover:text-white font-medium text-sm" data-en="Tap to reveal" data-hi="खोलने के लिए टैप करें">Tap to reveal</span>
+                    <i class="fa-regular fa-heart text-roseAccent"></i>
+                </div>
+
+                <div onclick="revealCard(this, 'c3')" class="compliment-card bg-[#1E1629] hover:bg-[#2A1F3D] border border-roseAccent/30 p-4 rounded-2xl cursor-pointer transition shadow-md flex justify-between items-center group">
+                    <span class="compliment-text text-gray-400 group-hover:text-white font-medium text-sm" data-en="Tap to reveal" data-hi="खोलने के लिए टैप करें">Tap to reveal</span>
+                    <i class="fa-regular fa-heart text-roseAccent"></i>
+                </div>
+
+                <div onclick="revealCard(this, 'c4')" class="compliment-card bg-[#1E1629] hover:bg-[#2A1F3D] border border-roseAccent/30 p-4 rounded-2xl cursor-pointer transition shadow-md flex justify-between items-center group">
+                    <span class="compliment-text text-gray-400 group-hover:text-white font-medium text-sm" data-en="Tap to reveal" data-hi="खोलने के लिए टैप करें">Tap to reveal</span>
+                    <i class="fa-regular fa-heart text-roseAccent"></i>
+                </div>
+
+                <div onclick="revealCard(this, 'c5')" class="compliment-card bg-[#1E1629] hover:bg-[#2A1F3D] border border-roseAccent/30 p-4 rounded-2xl cursor-pointer transition shadow-md flex justify-between items-center group">
+                    <span class="compliment-text text-gray-400 group-hover:text-white font-medium text-sm" data-en="Tap to reveal" data-hi="खोलने के लिए टैप करें">Tap to reveal</span>
+                    <i class="fa-regular fa-heart text-roseAccent"></i>
+                </div>
+            </div>
+
+            <button onclick="goToStep(4)" class="px-8 py-3 bg-gradient-to-r from-roseAccent to-pink-500 text-white font-semibold rounded-full shadow-lg hover:scale-105 transition flex items-center space-x-2">
+                <span id="t3_btn">See more</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </section>
+
+
+        <!-- ================= STEP 4: PHOTO MEMORIES GALLERY (3 Provided Cloudinary Photos) ================= -->
+        <section id="step4" class="page-step page-hidden flex flex-col items-center justify-center w-full px-2">
+            <h2 id="t4_heading" class="font-serif text-2xl md:text-3xl font-bold text-white mb-2">
+                Our Precious Memories 📸
+            </h2>
+            <p id="t4_sub" class="font-handwriting text-xl text-softPink mb-6">
+                Captured moments of pure joy & beauty
+            </p>
+
+            <!-- Exactly 3 Cloudinary Photos Grid -->
+            <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 max-h-[60vh] overflow-y-auto pr-1">
+                <!-- Photo 1 -->
+                <div class="polaroid-card bg-white p-3 pb-5 rounded-md shadow-lg transform -rotate-2 text-gray-800">
+                    <div class="w-full h-44 bg-pink-50 rounded-sm overflow-hidden mb-2">
+                        <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1795429905/gj3jgkxvewtdnnrpfb6c.jpg" alt="Memory 1" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-handwriting text-center text-xl text-deepWine">Radiant Smile ✨</p>
+                </div>
+
+                <!-- Photo 2 -->
+                <div class="polaroid-card bg-white p-3 pb-5 rounded-md shadow-lg transform rotate-2 text-gray-800">
+                    <div class="w-full h-44 bg-pink-50 rounded-sm overflow-hidden mb-2">
+                        <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1795429925/msvrf60ottuwlto7rxrc.jpg" alt="Memory 2" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-handwriting text-center text-xl text-deepWine">Magical Moments 🌸</p>
+                </div>
+
+                <!-- Photo 3 -->
+                <div class="polaroid-card bg-white p-3 pb-5 rounded-md shadow-lg transform -rotate-1 text-gray-800">
+                    <div class="w-full h-44 bg-pink-50 rounded-sm overflow-hidden mb-2">
+                        <img src="https://res.cloudinary.com/vijvpsmy/image/upload/v1795429938/omvrp2ngel6b2wmx2nf0.jpg" alt="Memory 3" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-handwriting text-center text-xl text-deepWine">Endless Joy 💖</p>
+                </div>
+            </div>
+
+            <button onclick="goToStep(5)" class="px-8 py-3 bg-gradient-to-r from-roseAccent to-pink-500 text-white font-semibold rounded-full shadow-lg hover:scale-105 transition flex items-center space-x-2">
+                <span id="t4_btn">Continue to Note</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </section>
+
+
+        <!-- ================= STEP 5: INTERACTIVE ENVELOPE & TYPEWRITER FINALE ================= -->
+        <section id="step5" class="page-step page-hidden flex flex-col items-center justify-center w-full px-2">
+            <h2 id="t5_heading" class="font-serif text-2xl md:text-3xl font-bold text-white mb-2">
+                A little note for you
+            </h2>
+            <p id="t5_sub" class="font-handwriting text-xl text-softPink mb-6">
+                Tap the card to open your romantic letter
+            </p>
+
+            <!-- Closed Envelope -->
+            <div id="envelopeCard" onclick="openEnvelope()" class="w-full bg-[#1E1629] border border-roseAccent/40 p-8 rounded-3xl shadow-2xl cursor-pointer transform hover:scale-105 transition group text-center mb-6 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-tr from-roseAccent/10 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+                <div class="w-16 h-16 bg-roseAccent/20 rounded-full flex items-center justify-center mx-auto mb-4 text-roseAccent animate-bounce">
+                    <i class="fa-solid fa-envelope-open-text text-3xl"></i>
+                </div>
+                <h3 id="t5_tap" class="font-serif text-xl font-bold text-white mb-1">Tap to open</h3>
+                <p id="t5_tap_sub" class="text-xs text-gray-400">Unveils live typewriter message & melody</p>
+            </div>
+
+            <!-- Opened Letter Container -->
+            <div id="openedLetterContainer" class="hidden w-full bg-[#1E1629] border border-roseAccent/50 p-6 rounded-3xl shadow-2xl text-left relative mb-6">
+                <div class="absolute top-4 right-4 text-roseAccent text-xl">
+                    <i class="fa-solid fa-heart animate-pulse"></i>
+                </div>
+                <div class="min-h-[140px] flex items-center">
+                    <p id="typewriterText" class="font-handwriting text-2xl md:text-3xl text-softPink leading-relaxed tracking-wide">
+                        <!-- Typewriter text inserted via JS -->
+                    </p>
+                </div>
+            </div>
+
+            <button id="finaleNextBtn" onclick="goToStep(6)" class="hidden px-8 py-3 bg-gradient-to-r from-roseAccent to-pink-500 text-white font-semibold rounded-full shadow-lg hover:scale-105 transition flex items-center space-x-2">
+                <span id="t5_btn">One more thing</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </section>
+
+
+        <!-- ================= STEP 6: FINALE SCREEN ================= -->
+        <section id="step6" class="page-step page-hidden flex flex-col items-center justify-center w-full">
+            <div class="w-32 h-32 md:w-36 md:h-36 rounded-full bg-gradient-to-tr from-roseAccent to-purple-500 flex items-center justify-center animate-bounce mb-6 shadow-2xl text-white">
+                <i class="fa-solid fa-face-smile-beam text-5xl"></i>
+            </div>
+
+            <h2 id="t6_heading" class="font-script text-4xl md:text-5xl text-roseAccent mb-2 font-bold">
+                You'll always be special to me
+            </h2>
+            <p id="t6_sub" class="font-handwriting text-2xl text-softPink mb-8">
+                Thank you for being the most wonderful part of my life! 💕
+            </p>
+
+            <button onclick="resetApp()" id="t6_btn" class="px-6 py-2.5 bg-[#1E1629] border border-roseAccent/40 hover:bg-roseAccent hover:text-white text-softPink rounded-full text-xs font-semibold shadow-md transition">
+                Replay Experience ↺
+            </button>
+        </section>
+
+    </main>
+
+    <!-- FOOTER WATERMARK -->
+    <footer class="relative z-20 mt-4 text-center text-xs text-gray-500">
+        <p id="footer_text">Made with infinite love & magic ✨</p>
+    </footer>
+
+    <!-- JAVASCRIPT & LOCALIZATION LOGIC -->
+    <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+        let currentLang = 'en'; // 'en' or 'hi'
+
+        const translations = {
+            en: {
+                navTitle: "❤️ You are special!",
+                t1_heading: "Hey Beautiful",
+                t1_sub: "Do you even know how cute you are?",
+                t1_btn: "Open My Heart",
+                t2_heading: "Measuring your cuteness...",
+                t2_sub1: "Calculating cuteness...",
+                t2_sub2: "⚠️ WARNING: TOO CUTE TO HANDLE",
+                t3_heading: "Just for you",
+                t3_sub: "Tap each one to reveal",
+                t3_btn: "See more",
+                c1: "You look adorable",
+                c2: "You have the sweetest vibe",
+                c3: "You make things feel lighter",
+                c4: "You are naturally charming",
+                c5: "You make everything feel more special",
+                t4_heading: "Our Precious Memories 📸",
+                t4_sub: "Captured moments of pure joy & beauty",
+                t4_btn: "Continue to Note",
+                t5_heading: "A little note for you",
+                t5_sub: "Tap the card to open your romantic letter",
+                t5_tap: "Tap to open",
+                t5_tap_sub: "Unveils live typewriter message & melody",
+                t5_btn: "One more thing",
+                t6_heading: "You'll always be special to me",
+                t6_sub: "Thank you for being the most wonderful part of my life! 💕",
+                t6_btn: "Replay Experience ↺",
+                footer_text: "Made with infinite love & magic ✨",
+                msg: "I just wanted to tell you something... you really are special in a way that's hard to explain.\n\nThere's a softness in the way you talk, a sweetness in the way you smile, and something genuine about you that just feels good to be around.\n\nYou don't try to be anything extra, you're just you, and that's what makes you so lovely."
+            },
+            hi: {
+                navTitle: "❤️ तुम बहुत खास हो!",
+                t1_heading: "ओए खूबसूरत",
+                t1_sub: "क्या तुम्हें पता है तुम कितनी प्यारी हो?",
+                t1_btn: "मेरा दिल खोलो",
+                t2_heading: "आपकी क्यूटनेस मापी जा रही है...",
+                t2_sub1: "क्यूटनेस की गणना हो रही है...",
+                t2_sub2: "⚠️ चेतावनी: बहुत अधिक प्यारी हो संभालना मुश्किल है",
+                t3_heading: "सिर्फ तुम्हारे लिए",
+                t3_sub: "जानने के लिए प्रत्येक पर टैप करें",
+                t3_btn: "और देखें",
+                c1: "तुम बहुत प्यारी दिखती हो",
+                c2: "तुम्हारा स्वभाव सबसे मीठा है",
+                c3: "तुम माहौल को हल्का कर देती हो",
+                c4: "तुम प्राकृतिक रूप से आकर्षक हो",
+                c5: "तुम हर चीज़ को और खास बना देती हो",
+                t4_heading: "हमारी प्यारी यादें 📸",
+                t4_sub: "खुशी और सुंदरता के अनमोल पल",
+                t4_btn: "संदेश की ओर आगे बढ़ें",
+                t5_heading: "आपके लिए एक छोटा सा नोट",
+                t5_sub: "अपना रोमांटिक पत्र खोलने के लिए कार्ड पर टैप करें",
+                t5_tap: "खोलने के लिए टैप करें",
+                t5_tap_sub: "लाइव टाइपराइटर संदेश और धुन खुलेगी",
+                t5_btn: "एक और बात",
+                t6_heading: "तुम हमेशा मेरे लिए खास रहोगी",
+                t6_sub: "मेरे जीवन का सबसे खूबसूरत हिस्सा बनने के लिए शुक्रिया! 💕",
+                t6_btn: "दोबारा अनुभव करें ↺",
+                footer_text: "अनंत प्यार और जादू के साथ बनाया गया ✨",
+                msg: "मैं बस तुमसे यह कहना चाहता था... तुम सच में इतनी खास हो कि इसे शब्दों में बयां करना मुश्किल है।\n\nतुम्हारी बातों में एक नरमी है, तुम्हारी मुस्कान में एक मिठास है, और तुम्हारे अंदर कुछ ऐसा है जिसके पास होने से बहुत सुकून मिलता है।\n\nतुम कुछ अलग दिखने की कोशिश नहीं करतीं, तुम जैसी हो वैसी ही अद्भुत हो, और यही बात तुम्हें सबसे प्यारी बनाती है।"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'hi' : 'en';
+            document.getElementById("langText").innerText = currentLang === 'en' ? 'हिंदी / Eng' : 'English / हिंदी';
+            updateTexts();
+        }
+
+        function updateTexts() {
+            const t = translations[currentLang];
+            document.getElementById("navTitle").innerText = t.navTitle;
+            document.getElementById("t1_heading").innerText = t.t1_heading;
+            document.getElementById("t1_sub").innerText = t.t1_sub;
+            document.getElementById("t1_btn").innerText = t.t1_btn;
+            document.getElementById("t2_heading").innerText = t.t2_heading;
+            document.getElementById("t3_heading").innerText = t.t3_heading;
+            document.getElementById("t3_sub").innerText = t.t3_sub;
+            document.getElementById("t3_btn").innerText = t.t3_btn;
+            document.getElementById("t4_heading").innerText = t.t4_heading;
+            document.getElementById("t4_sub").innerText = t.t4_sub;
+            document.getElementById("t4_btn").innerText = t.t4_btn;
+            document.getElementById("t5_heading").innerText = t.t5_heading;
+            document.getElementById("t5_sub").innerText = t.t5_sub;
+            document.getElementById("t5_tap").innerText = t.t5_tap;
+            document.getElementById("t5_tap_sub").innerText = t.t5_tap_sub;
+            document.getElementById("t5_btn").innerText = t.t5_btn;
+            document.getElementById("t6_heading").innerText = t.t6_heading;
+            document.getElementById("t6_sub").innerText = t.t6_sub;
+            document.getElementById("t6_btn").innerText = t.t6_btn;
+            document.getElementById("footer_text").innerText = t.footer_text;
+
+            // Update unrevealed compliment card text prompts
+            document.querySelectorAll(".compliment-text").forEach(span => {
+                if (!span.classList.contains("revealed")) {
+                    span.innerText = currentLang === 'en' ? "Tap to reveal" : "खोलने के लिए टैप करें";
+                }
+            });
+        }
+
+        function goToStep(stepNum) {
+            currentStep = stepNum;
+            for (let i = 1; i <= totalSteps; i++) {
+                const el = document.getElementById(`step${i}`);
+                if (i === stepNum) {
+                    el.classList.remove("page-hidden");
+                } else {
+                    el.classList.add("page-hidden");
+                }
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startCutenessMeter() {
+            goToStep(2);
+            let percent = 0;
+            const percentageEl = document.getElementById("cutenessPercentage");
+            const progressBarEl = document.getElementById("cutenessProgressBar");
+            const subtextEl = document.getElementById("cutenessSubtext");
+            const statusEl = document.getElementById("t2_heading");
+
+            const interval = setInterval(() => {
+                percent += 2;
+                if (percent <= 120) {
+                    percentageEl.innerText = percent + "%";
+                    progressBarEl.style.width = Math.min(percent, 100) + "%";
+
+                    if (percent === 66) {
+                        subtextEl.innerText = translations[currentLang].t2_sub1;
+                    } else if (percent === 120) {
+                        statusEl.innerText = currentLang === 'en' ? "Measurement Complete!" : "माप पूरा हुआ!";
+                        subtextEl.innerText = translations[currentLang].t2_sub2;
+                        subtextEl.classList.add("text-roseAccent", "font-bold");
+                        clearInterval(interval);
+
+                        setTimeout(() => {
+                            goToStep(3);
+                        }, 2200);
+                    }
+                }
+            }, 30);
+        }
+
+        function revealCard(cardEl, key) {
+            const span = cardEl.querySelector(".compliment-text");
+            span.innerText = translations[currentLang][key];
+            span.classList.add("revealed", "text-white", "font-medium", "text-base");
+            cardEl.classList.add("bg-[#2A1F3D]", "border-roseAccent");
+            playPopSound();
+        }
+
+        let envelopeOpened = false;
+        function openEnvelope() {
+            if (envelopeOpened) return;
+            envelopeOpened = true;
+
+            document.getElementById("envelopeCard").classList.add("hidden");
+            document.getElementById("openedLetterContainer").classList.remove("hidden");
+
+            // Audio transition: stop track 1, start track 2
+            const audio1 = document.getElementById("bg-audio-1");
+            const audio2 = document.getElementById("bg-audio-2");
+            audio1.src = "";
+            audio2.src = "https://www.youtube.com/embed/f5-IY_Ja1RM?enablejsapi=1&autoplay=1&loop=1&playlist=f5-IY_Ja1RM";
+
+            const message = translations[currentLang].msg;
+            const textEl = document.getElementById("typewriterText");
+            textEl.innerHTML = "";
+
+            let i = 0;
+            function typeWriter() {
+                if (i < message.length) {
+                    textEl.innerHTML += message.charAt(i) === '\n' ? '<br>' : message.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 35);
+                } else {
+                    document.getElementById("finaleNextBtn").classList.remove("hidden");
+                }
+            }
+            setTimeout(typeWriter, 500);
+        }
+
+        function resetApp() {
+            envelopeOpened = false;
+            document.getElementById("envelopeCard").classList.remove("hidden");
+            document.getElementById("openedLetterContainer").classList.add("hidden");
+            document.getElementById("finaleNextBtn").classList.add("hidden");
+            
+            document.getElementById("bg-audio-2").src = "";
+            document.getElementById("bg-audio-1").src = "https://www.youtube.com/embed/WQhkI8PMEqk?enablejsapi=1&autoplay=1&loop=1&playlist=WQhkI8PMEqk";
+            
+            goToStep(1);
+        }
+
+        let isAudioPlaying = true;
+        function toggleAudio() {
+            const audio1 = document.getElementById("bg-audio-1");
+            const audio2 = document.getElementById("bg-audio-2");
+            const icon = document.getElementById("audioIcon");
+            const text = document.getElementById("audioText");
+
+            isAudioPlaying = !isAudioPlaying;
+            if (!isAudioPlaying) {
+                audio1.src = "";
+                audio2.src = "";
+                icon.className = "fa-solid fa-volume-xmark text-gray-500";
+                text.innerText = currentLang === 'en' ? "Muted" : "म्यूट";
+            } else {
+                audio1.src = "https://www.youtube.com/embed/WQhkI8PMEqk?enablejsapi=1&autoplay=1&loop=1&playlist=WQhkI8PMEqk";
+                icon.className = "fa-solid fa-volume-high text-roseAccent animate-pulse";
+                text.innerText = currentLang === 'en' ? "Music" : "संगीत";
+            }
+        }
+
+        function playPopSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(580, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        // Falling Flower Petals Canvas Animation
+        const canvas = document.getElementById("petalCanvas");
+        const ctx = canvas.getContext("2d");
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener("resize", () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Petal {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = height + Math.random() * 100;
+                this.size = Math.random() * 12 + 8;
+                this.speedY = Math.random() * 1.2 + 0.6;
+                this.speedX = (Math.random() - 0.5) * 1;
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.5) * 2;
+                this.opacity = Math.random() * 0.6 + 0.3;
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX + Math.sin(this.y / 30) * 0.5;
+                this.rotation += this.rotSpeed;
+                if (this.y < -20) {
+                    this.y = height + 20;
+                    this.x = Math.random() * width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#FFB6C1';
+                ctx.font = `${this.size}px sans-serif`;
+                ctx.fillText('🌸', 0, 0);
+                ctx.restore();
+            }
+        }
+
+        const petalsArray = [];
+        for (let i = 0; i < 30; i++) {
+            petalsArray.push(new Petal());
+        }
+
+        function animatePetals() {
+            ctx.clearRect(0, 0, width, height);
+            petalsArray.forEach(petal => {
+                petal.update();
+                petal.draw();
+            });
+            requestAnimationFrame(animatePetals);
+        }
+        animatePetals();
+
+        window.onload = function() {
+            goToStep(1);
+        };
+    </script>
+</body>
+</html>
